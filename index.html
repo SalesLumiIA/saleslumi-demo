@@ -1,0 +1,958 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SalesLumi IA — Demo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<style>
+  :root {
+    --midnight: #0A1628;
+    --navy: #152035;
+    --gold: #E5B84A;
+    --gold-dark: #B8922A;
+    --signal: #1D9E75;
+    --risk: #E24B4A;
+    --bone: #F5F4F0;
+    --ink: #1C1C1A;
+    --ink2: #444441;
+    --ink3: #888780;
+    --border: rgba(0,0,0,0.1);
+    --border-light: rgba(255,255,255,0.1);
+    --radius: 12px;
+    --radius-sm: 8px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Inter', sans-serif; background: var(--bone); color: var(--ink); }
+
+  /* NAV */
+  nav {
+    background: var(--midnight);
+    padding: 0 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 56px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    border-bottom: 0.5px solid var(--border-light);
+  }
+  .nav-logo { display: flex; align-items: center; gap: 10px; }
+  .nav-wordmark { font-size: 18px; font-weight: 900; color: #fff; letter-spacing: -0.5px; }
+  .nav-wordmark span { color: var(--gold); }
+  .nav-ia { font-size: 11px; font-weight: 300; color: rgba(255,255,255,0.35); letter-spacing: 2px; margin-left: 4px; }
+  .nav-links { display: flex; gap: 4px; }
+  .nav-link {
+    font-size: 13px; color: rgba(255,255,255,0.45); padding: 6px 14px;
+    border-radius: 20px; cursor: pointer; transition: all 0.15s; border: none;
+    background: transparent; text-decoration: none;
+  }
+  .nav-link:hover, .nav-link.active { color: #fff; background: rgba(255,255,255,0.08); }
+  .nav-link.active { color: var(--gold); }
+
+  /* HERO */
+  .hero {
+    background: var(--midnight);
+    padding: 80px 32px 72px;
+    text-align: center;
+    border-bottom: 0.5px solid rgba(255,255,255,0.06);
+  }
+  .hero-icon { margin: 0 auto 24px; display: block; }
+  .hero-title { font-size: 52px; font-weight: 900; color: #fff; letter-spacing: -2px; line-height: 1; margin-bottom: 8px; }
+  .hero-title span { color: var(--gold); }
+  .hero-ia-label { font-size: 14px; font-weight: 300; color: rgba(255,255,255,0.3); letter-spacing: 3px; text-transform: uppercase; margin-bottom: 20px; }
+  .hero-sub { font-size: 16px; color: rgba(255,255,255,0.4); max-width: 480px; margin: 0 auto 32px; line-height: 1.65; }
+  .hero-tags { display: flex; gap: 8px; justify-content: center; flex-wrap: wrap; }
+  .hero-tag { font-size: 12px; padding: 5px 14px; border-radius: 20px; border: 0.5px solid rgba(255,255,255,0.12); color: rgba(255,255,255,0.4); }
+
+  /* SECTIONS */
+  .section { padding: 64px 32px; max-width: 1100px; margin: 0 auto; }
+  .section-header { margin-bottom: 32px; }
+  .section-eyebrow { font-size: 11px; font-weight: 500; letter-spacing: 1px; text-transform: uppercase; color: var(--gold-dark); margin-bottom: 8px; }
+  .section-title { font-size: 30px; font-weight: 900; color: var(--ink); letter-spacing: -1px; line-height: 1.1; }
+  .section-sub { font-size: 15px; color: var(--ink3); margin-top: 8px; line-height: 1.6; }
+
+  /* PHONE FRAME */
+  .phones-grid { display: flex; gap: 24px; justify-content: center; flex-wrap: wrap; }
+  .phone-wrap { display: flex; flex-direction: column; align-items: center; gap: 12px; }
+  .phone-label { font-size: 12px; color: var(--ink3); font-weight: 500; }
+  .phone-frame {
+    width: 300px;
+    background: #fff;
+    border-radius: 32px;
+    border: 6px solid var(--midnight);
+    overflow: hidden;
+    box-shadow: 0 24px 48px rgba(0,0,0,0.15);
+  }
+  .phone-notch { background: var(--midnight); height: 24px; display: flex; align-items: center; justify-content: space-between; padding: 0 16px; }
+  .phone-notch span { color: #fff; font-size: 10px; opacity: 0.7; }
+
+  /* SCREENS inside phone */
+  .screen { display: none; }
+  .screen.active { display: block; }
+  .topbar-dark { background: var(--midnight); padding: 12px 16px; }
+  .topbar-title { color: #fff; font-size: 14px; font-weight: 500; }
+  .topbar-sub { color: rgba(255,255,255,0.4); font-size: 11px; margin-top: 1px; }
+  .screen-content { padding: 14px; background: var(--bone); min-height: 520px; }
+
+  /* CARDS */
+  .card { background: #fff; border: 0.5px solid var(--border); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 10px; }
+  .card-title { font-size: 13px; font-weight: 500; color: var(--ink); margin-bottom: 10px; display: flex; align-items: center; justify-content: space-between; }
+  .label-sm { font-size: 10px; font-weight: 500; letter-spacing: 0.6px; text-transform: uppercase; padding: 2px 8px; border-radius: 12px; }
+  .label-gold { background: #FAEEDA; color: #633806; }
+  .label-teal { background: #E1F5EE; color: #085041; }
+  .label-blue { background: #E6F1FB; color: #0C447C; }
+  .label-red { background: #FCEBEB; color: #791F1F; }
+
+  /* TASK CARDS */
+  .task-card { background: #fff; border: 0.5px solid var(--border); border-radius: var(--radius); padding: 12px 14px; margin-bottom: 8px; cursor: pointer; transition: border-color 0.15s; }
+  .task-card:hover { border-color: var(--gold); }
+  .task-card.featured { border-color: var(--gold); border-width: 1.5px; }
+  .task-row { display: flex; align-items: center; gap: 10px; }
+  .task-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 16px; flex-shrink: 0; }
+  .icon-teal { background: #E1F5EE; color: #085041; }
+  .icon-amber { background: #FAEEDA; color: #633806; }
+  .icon-blue { background: #E6F1FB; color: #0C447C; }
+  .task-info { flex: 1; min-width: 0; }
+  .task-name { font-size: 13px; font-weight: 500; color: var(--ink); }
+  .task-meta { font-size: 11px; color: var(--ink3); margin-top: 1px; }
+  .task-prob { font-size: 11px; color: var(--ink3); display: flex; align-items: center; gap: 4px; }
+  .prob-dot { width: 7px; height: 7px; border-radius: 50%; }
+  .dot-high { background: var(--signal); }
+  .dot-mid { background: #EF9F27; }
+
+  /* KPI GRID */
+  .kpi-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 14px; }
+  .kpi { background: #F5F4F0; border-radius: var(--radius-sm); padding: 12px; }
+  .kpi-label { font-size: 11px; color: var(--ink3); margin-bottom: 3px; }
+  .kpi-val { font-size: 20px; font-weight: 700; color: var(--ink); }
+  .kpi-sub { font-size: 11px; color: var(--signal); margin-top: 2px; }
+
+  /* DOSSIE LAYERS */
+  .layer { background: #fff; border: 0.5px solid var(--border); border-radius: var(--radius); padding: 12px 14px; margin-bottom: 8px; }
+  .layer-tag { font-size: 10px; font-weight: 500; letter-spacing: 0.5px; text-transform: uppercase; padding: 2px 8px; border-radius: 12px; display: inline-block; margin-bottom: 7px; }
+  .tag-fundacao { background: #F1EFE8; color: #444441; }
+  .tag-contexto { background: #E6F1FB; color: #0C447C; }
+  .tag-swot { background: #FAEEDA; color: #633806; }
+  .tag-diretriz { background: #E1F5EE; color: #085041; }
+  .layer-title { font-size: 13px; font-weight: 500; color: var(--ink); margin-bottom: 5px; }
+  .layer-body { font-size: 12px; color: var(--ink3); line-height: 1.55; }
+  .highlight-box { background: #E1F5EE; border-radius: var(--radius-sm); padding: 10px 12px; margin-top: 8px; }
+  .highlight-box p { font-size: 12px; color: #085041; line-height: 1.5; }
+  .warn-box { background: #FAEEDA; border-radius: var(--radius-sm); padding: 10px 12px; margin-top: 8px; }
+  .warn-box p { font-size: 12px; color: #633806; line-height: 1.5; }
+  .swot-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 8px; }
+  .swot-item { border-radius: var(--radius-sm); padding: 9px 10px; }
+  .swot-f { background: #E1F5EE; }
+  .swot-fr { background: #FAEEDA; }
+  .swot-o { background: #E6F1FB; }
+  .swot-a { background: #FCEBEB; }
+  .swot-letter { font-size: 10px; font-weight: 500; text-transform: uppercase; margin-bottom: 2px; }
+  .swot-f .swot-letter { color: #0F6E56; } .swot-f .swot-text { color: #085041; }
+  .swot-fr .swot-letter { color: #854F0B; } .swot-fr .swot-text { color: #633806; }
+  .swot-o .swot-letter { color: #185FA5; } .swot-o .swot-text { color: #0C447C; }
+  .swot-a .swot-letter { color: #A32D2D; } .swot-a .swot-text { color: #791F1F; }
+  .swot-text { font-size: 11px; line-height: 1.4; }
+  .xeque-box { background: var(--midnight); border-radius: var(--radius-sm); padding: 12px 14px; margin-top: 8px; }
+  .xq-label { font-size: 10px; color: var(--gold); font-weight: 500; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 4px; }
+  .xq-sku { font-size: 15px; font-weight: 700; color: #fff; margin-bottom: 5px; }
+  .xq-body { font-size: 12px; color: rgba(255,255,255,0.6); line-height: 1.5; }
+  .xq-obj { background: rgba(229,184,74,0.1); border-radius: 7px; padding: 8px 10px; margin-top: 8px; }
+  .xq-obj p { font-size: 12px; color: var(--gold); line-height: 1.45; }
+  .btn-primary { width: 100%; padding: 12px; border-radius: var(--radius); background: var(--midnight); color: #fff; font-size: 13px; font-weight: 500; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 6px; transition: opacity 0.15s; }
+  .btn-primary:hover { opacity: 0.85; }
+  .btn-sec { width: 100%; padding: 10px; border-radius: var(--radius); background: transparent; color: var(--ink3); font-size: 12px; border: 0.5px solid var(--border); cursor: pointer; margin-top: 8px; transition: background 0.15s; }
+  .btn-sec:hover { background: #f0f0ec; }
+
+  /* DNA BAR */
+  .dna-row { display: flex; align-items: center; gap: 6px; }
+  .dna-bar-outer { flex: 1; height: 5px; background: #eee; border-radius: 3px; overflow: hidden; }
+  .dna-bar-fill { height: 100%; border-radius: 3px; background: var(--signal); }
+  .dna-pct { font-size: 11px; font-weight: 500; color: #0F6E56; min-width: 28px; text-align: right; }
+
+  /* DEAL ROW */
+  .deal-row { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 0.5px solid var(--border); }
+  .deal-row:last-child { border-bottom: none; padding-bottom: 0; }
+  .deal-init { width: 32px; height: 32px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 500; flex-shrink: 0; }
+  .farol { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-left: 6px; }
+  .f-verde { background: var(--signal); }
+  .f-amarelo { background: #EF9F27; }
+  .f-vermelho { background: var(--risk); }
+
+  /* REP ROW */
+  .rep-row { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 0.5px solid var(--border); }
+  .rep-row:last-child { border-bottom: none; }
+  .rep-av { width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 500; flex-shrink: 0; }
+  .bar-wrap { flex: 1; height: 5px; background: #eee; border-radius: 3px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 3px; }
+  .bar-green { background: var(--signal); }
+  .bar-amber { background: #EF9F27; }
+  .bar-red { background: var(--risk); }
+
+  /* MAP MOCK */
+  .map-mock { background: #e8e8e4; border-radius: var(--radius); height: 160px; position: relative; overflow: hidden; margin-bottom: 12px; }
+  .map-street { position: absolute; background: rgba(0,0,0,0.08); }
+  .map-street.h { left: 0; right: 0; height: 1px; }
+  .map-street.v { top: 0; bottom: 0; width: 1px; }
+  .map-pin { position: absolute; width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 11px; border: 2px solid #fff; transform: translate(-50%,-50%); cursor: pointer; transition: transform 0.15s; }
+  .map-pin:hover { transform: translate(-50%,-50%) scale(1.15); }
+  .pin-gold { background: var(--gold); color: var(--midnight); }
+  .pin-teal { background: var(--signal); color: #fff; }
+  .pin-blue { background: #378ADD; color: #fff; }
+  .pin-you { background: var(--midnight); color: var(--gold); font-size: 9px; font-weight: 700; }
+  .map-legend { position: absolute; bottom: 8px; left: 8px; display: flex; flex-direction: column; gap: 3px; }
+  .leg-item { display: flex; align-items: center; gap: 4px; font-size: 10px; color: var(--ink); background: rgba(255,255,255,0.9); padding: 2px 6px; border-radius: 4px; }
+  .leg-dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+
+  /* CHURN */
+  .churn-row { display: flex; align-items: flex-start; gap: 10px; padding: 8px 0; border-bottom: 0.5px solid var(--border); }
+  .churn-row:last-child { border-bottom: none; }
+  .churn-badge { font-size: 10px; font-weight: 500; padding: 2px 8px; border-radius: 12px; flex-shrink: 0; margin-top: 1px; }
+  .ch-alto { background: #FCEBEB; color: #791F1F; }
+  .ch-medio { background: #FAEEDA; color: #633806; }
+
+  /* ORACULO */
+  .oraculo-dark { background: var(--midnight); border-radius: var(--radius); padding: 14px 16px; margin-bottom: 10px; }
+  .oq { font-size: 12px; color: rgba(255,255,255,0.4); margin-bottom: 7px; }
+  .oa { font-size: 12px; color: rgba(255,255,255,0.82); line-height: 1.6; }
+  .oh { color: var(--gold); font-weight: 500; }
+  .oh-green { color: #5DCAA5; font-weight: 500; }
+
+  /* BRANDBOOK */
+  .bb-section { margin-bottom: 40px; }
+  .bb-label { font-size: 11px; font-weight: 500; letter-spacing: 0.9px; text-transform: uppercase; color: var(--ink3); margin-bottom: 16px; padding-bottom: 8px; border-bottom: 0.5px solid var(--border); }
+  .swatch-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+  .swatch { border-radius: var(--radius-sm); overflow: hidden; border: 0.5px solid var(--border); }
+  .sw-color { height: 64px; }
+  .sw-info { padding: 10px 12px; background: #fff; }
+  .sw-name { font-size: 12px; font-weight: 500; color: var(--ink); }
+  .sw-hex { font-size: 11px; color: var(--ink3); margin-top: 1px; font-family: monospace; }
+  .sw-role { font-size: 10px; color: var(--ink3); margin-top: 3px; line-height: 1.3; }
+  .type-row-bb { display: flex; align-items: baseline; gap: 16px; padding: 14px 0; border-bottom: 0.5px solid var(--border); }
+  .type-row-bb:last-child { border-bottom: none; }
+  .type-meta-col { font-size: 11px; color: var(--ink3); min-width: 180px; text-align: right; flex-shrink: 0; }
+  .principle-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .principle-card { background: #F5F4F0; border-radius: var(--radius); padding: 16px; }
+  .pc-num { font-size: 26px; font-weight: 900; color: var(--gold); opacity: 0.5; margin-bottom: 6px; }
+  .pc-title { font-size: 13px; font-weight: 500; color: var(--ink); margin-bottom: 4px; }
+  .pc-body { font-size: 12px; color: var(--ink3); line-height: 1.5; }
+  .vrow { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
+  .vcard-do { background: #E1F5EE; border-radius: var(--radius-sm); padding: 12px 14px; }
+  .vcard-dont { background: #FCEBEB; border-radius: var(--radius-sm); padding: 12px 14px; }
+  .vtag { font-size: 10px; font-weight: 500; letter-spacing: 0.6px; text-transform: uppercase; margin-bottom: 6px; }
+  .vtag-do { color: #085041; }
+  .vtag-dont { color: #791F1F; }
+  .vtext-do { font-size: 12px; color: #085041; line-height: 1.55; }
+  .vtext-dont { font-size: 12px; color: #791F1F; line-height: 1.55; }
+
+  /* GEMEO */
+  .gemeo-row { display: flex; align-items: center; gap: 8px; background: #F5F4F0; border-radius: var(--radius-sm); padding: 7px 10px; margin-bottom: 6px; }
+  .gemeo-icon { width: 26px; height: 26px; border-radius: 7px; background: #E1F5EE; color: #085041; display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 500; flex-shrink: 0; }
+  .gemeo-name { font-size: 12px; font-weight: 500; color: var(--ink); flex: 1; }
+  .gemeo-fat { font-size: 11px; color: var(--signal); font-weight: 500; }
+
+  /* FORECAST BAR */
+  .forecast-bar-outer { height: 10px; background: #eee; border-radius: 5px; position: relative; margin-bottom: 6px; }
+
+  /* TABS */
+  .tab-row { display: flex; border-bottom: 0.5px solid var(--border); margin-bottom: 12px; }
+  .tab { flex: 1; text-align: center; padding: 8px 0; font-size: 12px; color: var(--ink3); cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.15s; }
+  .tab.on { color: var(--ink); border-bottom-color: var(--gold); font-weight: 500; }
+
+  /* CLIENT HEADER */
+  .client-header { background: var(--midnight); padding: 14px 16px; }
+  .client-name { font-size: 15px; font-weight: 500; color: #fff; }
+  .client-meta { font-size: 11px; color: rgba(255,255,255,0.4); margin-top: 2px; }
+  .info-row { display: flex; gap: 8px; margin-top: 10px; }
+  .info-chip { flex: 1; background: rgba(255,255,255,0.07); border-radius: 8px; padding: 7px 10px; }
+  .ic-label { font-size: 10px; color: rgba(255,255,255,0.3); margin-bottom: 2px; }
+  .ic-val { font-size: 12px; color: #fff; font-weight: 500; }
+  .dna-ring { width: 50px; height: 50px; border-radius: 50%; border: 3px solid var(--signal); display: flex; flex-direction: column; align-items: center; justify-content: center; flex-shrink: 0; }
+  .dna-ring-val { font-size: 14px; font-weight: 700; color: var(--signal); }
+  .dna-ring-lbl { font-size: 9px; color: rgba(255,255,255,0.4); }
+
+  /* DIRECTOR SECTION */
+  .dir-section { background: #fff; padding: 48px 32px; border-top: 0.5px solid var(--border); }
+
+  /* FOOTER */
+  footer { background: var(--midnight); padding: 32px; text-align: center; border-top: 0.5px solid rgba(255,255,255,0.06); }
+  footer p { font-size: 12px; color: rgba(255,255,255,0.25); }
+  footer strong { color: var(--gold); font-weight: 500; }
+
+  /* SECTION DIVIDER */
+  .sec-divider { background: var(--midnight); padding: 48px 32px; }
+  .sd-inner { max-width: 1100px; margin: 0 auto; }
+  .sd-title { font-size: 28px; font-weight: 900; color: #fff; letter-spacing: -1px; }
+  .sd-title span { color: var(--gold); }
+  .sd-sub { font-size: 14px; color: rgba(255,255,255,0.35); margin-top: 6px; }
+
+  /* RESPONSIVE */
+  @media (max-width: 768px) {
+    .phones-grid { flex-direction: column; align-items: center; }
+    .swatch-grid { grid-template-columns: repeat(2, 1fr); }
+    .principle-grid { grid-template-columns: 1fr; }
+    nav { padding: 0 16px; }
+    .nav-links { gap: 2px; }
+    .nav-link { padding: 6px 10px; font-size: 12px; }
+    .hero { padding: 48px 16px; }
+    .hero-title { font-size: 36px; }
+    .section { padding: 40px 16px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">
+    <svg width="28" height="28" viewBox="0 0 64 64" fill="none">
+      <rect width="64" height="64" rx="14" fill="#0F2240"/>
+      <circle cx="32" cy="32" r="7" fill="#E5B84A"/>
+      <circle cx="32" cy="11" r="2.5" fill="#E5B84A" opacity="0.9"/>
+      <circle cx="32" cy="53" r="2.5" fill="#E5B84A" opacity="0.5"/>
+      <circle cx="11" cy="32" r="2.5" fill="#E5B84A" opacity="0.7"/>
+      <circle cx="53" cy="32" r="2.5" fill="#E5B84A" opacity="0.4"/>
+      <circle cx="17" cy="17" r="2" fill="#E5B84A" opacity="0.6"/>
+      <circle cx="47" cy="17" r="2" fill="#E5B84A" opacity="0.35"/>
+      <circle cx="17" cy="47" r="2" fill="#E5B84A" opacity="0.3"/>
+      <line x1="32" y1="25" x2="32" y2="13.5" stroke="#E5B84A" stroke-width="0.75" stroke-opacity="0.45"/>
+      <line x1="32" y1="39" x2="32" y2="50.5" stroke="#E5B84A" stroke-width="0.75" stroke-opacity="0.3"/>
+      <line x1="25" y1="32" x2="13.5" y2="32" stroke="#E5B84A" stroke-width="0.75" stroke-opacity="0.4"/>
+      <line x1="39" y1="32" x2="50.5" y2="32" stroke="#E5B84A" stroke-width="0.75" stroke-opacity="0.25"/>
+      <line x1="26.9" y1="26.9" x2="19" y2="19" stroke="#E5B84A" stroke-width="0.75" stroke-opacity="0.35"/>
+      <line x1="37.1" y1="26.9" x2="45" y2="19" stroke="#E5B84A" stroke-width="0.75" stroke-opacity="0.2"/>
+    </svg>
+    <div>
+      <span class="nav-wordmark">Sales<span>Lumi</span></span>
+      <span class="nav-ia">IA</span>
+    </div>
+  </div>
+  <div class="nav-links">
+    <a href="#vendedor" class="nav-link">Vendedor</a>
+    <a href="#gerente" class="nav-link">Gerente</a>
+    <a href="#diretor" class="nav-link">Diretor</a>
+    <a href="#brand" class="nav-link">Brand</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <svg class="hero-icon" width="72" height="72" viewBox="0 0 64 64" fill="none">
+    <rect width="64" height="64" rx="16" fill="#0F2240"/>
+    <circle cx="32" cy="32" r="7" fill="#E5B84A"/>
+    <circle cx="32" cy="32" r="14" fill="#E5B84A" opacity="0.07"/>
+    <circle cx="32" cy="11" r="2.5" fill="#E5B84A" opacity="0.9"/>
+    <circle cx="32" cy="53" r="2.5" fill="#E5B84A" opacity="0.5"/>
+    <circle cx="11" cy="32" r="2.5" fill="#E5B84A" opacity="0.7"/>
+    <circle cx="53" cy="32" r="2.5" fill="#E5B84A" opacity="0.4"/>
+    <circle cx="17" cy="17" r="2" fill="#E5B84A" opacity="0.6"/>
+    <circle cx="47" cy="17" r="2" fill="#E5B84A" opacity="0.35"/>
+    <circle cx="17" cy="47" r="2" fill="#E5B84A" opacity="0.3"/>
+    <circle cx="47" cy="47" r="1.5" fill="#E5B84A" opacity="0.18"/>
+    <line x1="32" y1="25" x2="32" y2="13.5" stroke="#E5B84A" stroke-width="0.75" stroke-opacity="0.45"/>
+    <line x1="32" y1="39" x2="32" y2="50.5" stroke="#E5B84A" stroke-width="0.75" stroke-opacity="0.3"/>
+    <line x1="25" y1="32" x2="13.5" y2="32" stroke="#E5B84A" stroke-width="0.75" stroke-opacity="0.4"/>
+    <line x1="39" y1="32" x2="50.5" y2="32" stroke="#E5B84A" stroke-width="0.75" stroke-opacity="0.25"/>
+    <line x1="26.9" y1="26.9" x2="19" y2="19" stroke="#E5B84A" stroke-width="0.75" stroke-opacity="0.35"/>
+    <line x1="37.1" y1="26.9" x2="45" y2="19" stroke="#E5B84A" stroke-width="0.75" stroke-opacity="0.2"/>
+    <line x1="26.9" y1="37.1" x2="19" y2="45" stroke="#E5B84A" stroke-width="0.75" stroke-opacity="0.2"/>
+  </svg>
+  <h1 class="hero-title">Sales<span>Lumi</span></h1>
+  <p class="hero-ia-label">Inteligência Artificial</p>
+  <p class="hero-sub">Luz no caminho do vendedor. Precisão na direção do negócio.</p>
+  <div class="hero-tags">
+    <span class="hero-tag">Energia humana</span>
+    <span class="hero-tag">Luz como clareza</span>
+    <span class="hero-tag">Inteligência preditiva</span>
+    <span class="hero-tag">Sales Enablement B2B</span>
+  </div>
+</section>
+
+<!-- VENDEDOR -->
+<div class="sec-divider" id="vendedor">
+  <div class="sd-inner">
+    <div class="sd-title">Visão do <span>vendedor</span></div>
+    <div class="sd-sub">Copiloto de elite · Dossiê 360° · Morning Kick-off · Prospecção</div>
+  </div>
+</div>
+<section class="section">
+  <div class="phones-grid">
+
+    <!-- PHONE 1: MORNING KICK-OFF -->
+    <div class="phone-wrap">
+      <div class="phone-label">Morning kick-off</div>
+      <div class="phone-frame">
+        <div class="phone-notch"><span>09:14</span><span>SP · Vila Madalena</span></div>
+        <div class="topbar-dark">
+          <div class="topbar-title">SalesLumi IA</div>
+          <div class="topbar-sub">Copiloto de elite</div>
+        </div>
+        <div class="screen-content">
+          <p style="font-size:12px;color:var(--ink3);margin-bottom:2px">Bom dia,</p>
+          <p style="font-size:20px;font-weight:700;color:var(--ink);margin-bottom:14px;letter-spacing:-0.5px">Rafael</p>
+          <div class="kpi-grid">
+            <div class="kpi"><div class="kpi-label">Missões hoje</div><div class="kpi-val">3</div><div class="kpi-sub">82% prob. média</div></div>
+            <div class="kpi"><div class="kpi-label">Comissão pot.</div><div class="kpi-val">R$1.840</div><div class="kpi-sub" style="color:var(--gold-dark)">se fechar tudo</div></div>
+          </div>
+          <p style="font-size:10px;font-weight:500;letter-spacing:0.7px;text-transform:uppercase;color:var(--ink3);margin-bottom:8px">Missão do dia</p>
+          <div class="task-card featured">
+            <div class="task-row">
+              <div class="task-icon icon-teal"><i class="ti ti-building-store"></i></div>
+              <div class="task-info">
+                <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+                  <span class="label-sm label-teal">Up-sell</span>
+                  <span class="task-prob"><span class="prob-dot dot-high"></span>91%</span>
+                </div>
+                <div class="task-name">Adega São Bento</div>
+                <div class="task-meta">Vila Madalena · Visita</div>
+              </div>
+            </div>
+          </div>
+          <div class="task-card" style="opacity:0.55">
+            <div class="task-row">
+              <div class="task-icon icon-amber"><i class="ti ti-phone"></i></div>
+              <div class="task-info">
+                <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+                  <span class="label-sm label-gold">Reativação</span>
+                  <span class="task-prob"><span class="prob-dot dot-mid"></span>74%</span>
+                </div>
+                <div class="task-name">Bar do Zé</div>
+                <div class="task-meta">Pinheiros · Ligação</div>
+              </div>
+            </div>
+          </div>
+          <div class="task-card" style="opacity:0.4">
+            <div class="task-row">
+              <div class="task-icon icon-blue"><i class="ti ti-mail"></i></div>
+              <div class="task-info">
+                <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+                  <span class="label-sm label-blue">Expansão</span>
+                  <span class="task-prob"><span class="prob-dot dot-mid"></span>68%</span>
+                </div>
+                <div class="task-name">Empório Jardins</div>
+                <div class="task-meta">Jardins · E-mail</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PHONE 2: DOSSIÊ -->
+    <div class="phone-wrap">
+      <div class="phone-label">Dossiê 360°</div>
+      <div class="phone-frame">
+        <div class="phone-notch"><span>09:22</span><span>SP · Vila Madalena</span></div>
+        <div class="client-header">
+          <div style="display:flex;align-items:center;gap:10px">
+            <div style="flex:1">
+              <div style="font-size:10px;color:rgba(255,255,255,0.3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:2px">Dossiê 360°</div>
+              <div class="client-name">Adega São Bento</div>
+            </div>
+            <span style="background:var(--signal);color:#fff;font-size:10px;padding:3px 10px;border-radius:12px;font-weight:500">Alto potencial</span>
+          </div>
+          <div class="info-row">
+            <div class="info-chip"><div class="ic-label">Ticket médio</div><div class="ic-val" style="color:var(--gold)">R$4.200/mês</div></div>
+            <div class="info-chip"><div class="ic-label">Ativo há</div><div class="ic-val">18 meses</div></div>
+          </div>
+        </div>
+        <div class="screen-content">
+          <div class="layer">
+            <span class="layer-tag tag-fundacao">Fundação</span>
+            <div class="layer-title">Histórico de compras</div>
+            <div class="layer-body">Compra consistente de artesanais (60%) e vinhos de entrada (40%). Último pedido: R$3.900 em 22/05.</div>
+            <div class="warn-box"><p><strong>Sinal:</strong> Nenhuma compra de vinho premium nos últimos 6 meses. Platô de crescimento desde fev/2025.</p></div>
+          </div>
+          <div class="layer">
+            <span class="layer-tag tag-contexto">Contexto · Morning kick-off</span>
+            <div class="layer-title">Quebra-gelo estratégico</div>
+            <div class="highlight-box"><p><strong>Roteiro:</strong> "Sr. Marcos, a Vila Madalena está em transformação. Fiz um estudo de oportunidade específico para a Adega que quero te mostrar."</p></div>
+          </div>
+          <div class="layer">
+            <span class="layer-tag tag-swot">Cenário · SWOT</span>
+            <div class="swot-grid">
+              <div class="swot-item swot-f"><div class="swot-letter">Força</div><div class="swot-text">Localização premium e base fiel</div></div>
+              <div class="swot-item swot-fr"><div class="swot-letter">Fraqueza</div><div class="swot-text">Mix de vinhos desatualizado</div></div>
+              <div class="swot-item swot-o"><div class="swot-letter">Oportunidade</div><div class="swot-text">Novo público fine dining na vizinhança</div></div>
+              <div class="swot-item swot-a"><div class="swot-letter">Ameaça</div><div class="swot-text">Concorrente a 600m ampliou importados</div></div>
+            </div>
+          </div>
+          <div class="layer">
+            <span class="layer-tag tag-diretriz">Inteligência · Diretriz</span>
+            <div class="xeque-box">
+              <div class="xq-label">SKU alvo</div>
+              <div class="xq-sku">Kit Vinhos Argentinos Premium</div>
+              <div class="xq-body">DNA 94% — clientes gêmeos geraram +R$2.100 em 90 dias.</div>
+              <div class="xq-obj"><p><strong style="color:var(--gold)">Objeção esperada:</strong> "Estoque cheio." — "Exato, diversifique. Vinho tem margem 40% maior."</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PHONE 3: PROSPECÇÃO -->
+    <div class="phone-wrap">
+      <div class="phone-label">Módulo de prospecção</div>
+      <div class="phone-frame">
+        <div class="phone-notch"><span>09:31</span><span>SP · Vila Madalena</span></div>
+        <div class="topbar-dark">
+          <div class="topbar-title">Prospecção</div>
+          <div class="topbar-sub">4 alvos com DNA 80%+ em 600m</div>
+        </div>
+        <div class="screen-content">
+          <div class="map-mock">
+            <div class="map-street h" style="top:33%"></div>
+            <div class="map-street h" style="top:62%"></div>
+            <div class="map-street v" style="left:30%"></div>
+            <div class="map-street v" style="left:65%"></div>
+            <div class="map-pin pin-you" style="top:52%;left:50%">Você</div>
+            <div class="map-pin pin-gold" style="top:28%;left:38%"><i class="ti ti-building-store" style="font-size:11px"></i></div>
+            <div class="map-pin pin-teal" style="top:68%;left:22%"><i class="ti ti-building-store" style="font-size:11px"></i></div>
+            <div class="map-pin pin-blue" style="top:42%;left:72%"><i class="ti ti-glass" style="font-size:11px"></i></div>
+            <div class="map-legend">
+              <div class="leg-item"><div class="leg-dot" style="background:var(--gold)"></div>DNA 90%+</div>
+              <div class="leg-item"><div class="leg-dot" style="background:var(--signal)"></div>DNA 70–89%</div>
+              <div class="leg-item"><div class="leg-dot" style="background:#378ADD"></div>DNA 50–69%</div>
+            </div>
+          </div>
+          <div class="tab-row">
+            <div class="tab on"><i class="ti ti-sparkles" style="font-size:12px;margin-right:3px"></i>Sugeridos</div>
+            <div class="tab"><i class="ti ti-map" style="font-size:12px;margin-right:3px"></i>Próximos</div>
+          </div>
+          <div class="task-card featured">
+            <div class="task-row" style="margin-bottom:8px">
+              <div class="task-icon icon-amber"><i class="ti ti-building-store"></i></div>
+              <div class="task-info">
+                <div class="task-name">Empório Paulistano</div>
+                <div class="task-meta">Mercearia fina · 180m</div>
+              </div>
+              <span style="font-size:10px;background:#eee;padding:2px 7px;border-radius:10px;color:var(--ink3)">180m</span>
+            </div>
+            <div class="dna-row" style="margin-bottom:6px">
+              <span style="font-size:10px;color:var(--ink3);min-width:76px">DNA de sucesso</span>
+              <div class="dna-bar-outer"><div class="dna-bar-fill" style="width:94%"></div></div>
+              <span class="dna-pct">94%</span>
+            </div>
+            <div style="display:flex;align-items:center;justify-content:space-between;padding-top:8px;border-top:0.5px solid var(--border)">
+              <span class="label-sm label-teal"><i class="ti ti-wine" style="font-size:10px"></i> Kit Vinhos Premium</span>
+              <span style="font-size:12px;font-weight:500;color:var(--signal)">Pot. R$3.200/mês</span>
+            </div>
+          </div>
+          <div class="task-card">
+            <div class="task-row" style="margin-bottom:8px">
+              <div class="task-icon icon-teal"><i class="ti ti-glass"></i></div>
+              <div class="task-info">
+                <div class="task-name">Bar Conceito Aspicuelta</div>
+                <div class="task-meta">Bar premium · 340m</div>
+              </div>
+            </div>
+            <div class="dna-row">
+              <span style="font-size:10px;color:var(--ink3);min-width:76px">DNA de sucesso</span>
+              <div class="dna-bar-outer"><div class="dna-bar-fill" style="width:81%"></div></div>
+              <span class="dna-pct">81%</span>
+            </div>
+          </div>
+          <div class="task-card">
+            <div class="task-row" style="margin-bottom:8px">
+              <div class="task-icon icon-blue"><i class="ti ti-building-store"></i></div>
+              <div class="task-info">
+                <div class="task-name">Deli Vila</div>
+                <div class="task-meta">Delicatessen · 490m</div>
+              </div>
+            </div>
+            <div class="dna-row">
+              <span style="font-size:10px;color:var(--ink3);min-width:76px">DNA de sucesso</span>
+              <div class="dna-bar-outer"><div class="dna-bar-fill" style="width:67%;background:#378ADD"></div></div>
+              <span class="dna-pct" style="color:#0C447C">67%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- GERENTE -->
+<div class="sec-divider" id="gerente" style="border-top:0.5px solid rgba(255,255,255,0.06)">
+  <div class="sd-inner">
+    <div class="sd-title">Torre de controle — <span>Gerente</span></div>
+    <div class="sd-sub">Forecast · Top deals · Performance do time · Oráculo IA · Churn silencioso</div>
+  </div>
+</div>
+<section class="section">
+  <div style="background:#fff;border:0.5px solid var(--border);border-radius:var(--radius);overflow:hidden">
+    <div style="background:var(--midnight);padding:12px 20px;display:flex;align-items:center;justify-content:space-between">
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="color:var(--gold);font-size:15px;font-weight:700">SalesLumi IA</span>
+        <span style="color:rgba(255,255,255,0.2)">/</span>
+        <span style="color:rgba(255,255,255,0.55);font-size:13px">Torre de controle — Gerente</span>
+      </div>
+      <span style="color:rgba(255,255,255,0.3);font-size:12px">Jun 2025 · semana 3</span>
+    </div>
+    <div style="padding:16px;background:var(--bone)">
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px">
+        <div class="kpi"><div class="kpi-label">Receita no mês</div><div class="kpi-val">R$312k</div><div class="kpi-sub">+18% vs. mai</div></div>
+        <div class="kpi"><div class="kpi-label">Meta junho</div><div class="kpi-val">R$400k</div><div class="kpi-sub" style="color:var(--ink3)">78% atingido</div></div>
+        <div class="kpi"><div class="kpi-label">Forecast IA</div><div class="kpi-val">R$391k</div><div class="kpi-sub" style="color:var(--risk)">R$9k abaixo da meta</div></div>
+        <div class="kpi"><div class="kpi-label">Em risco</div><div class="kpi-val">3</div><div class="kpi-sub" style="color:var(--risk)">ação necessária</div></div>
+      </div>
+      <div class="card" style="margin-bottom:12px">
+        <div class="card-title">Forecast de meta — junho <span class="label-sm label-gold">IA preditiva</span></div>
+        <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--ink3);margin-bottom:6px">
+          <span>Realizado até hoje</span><span style="font-weight:500;color:var(--ink)">R$312k / R$400k</span>
+        </div>
+        <div class="forecast-bar-outer">
+          <div style="position:absolute;top:0;left:0;width:97.8%;height:100%;border-radius:5px;background:#B5D4F4"></div>
+          <div style="position:absolute;top:0;left:0;width:78%;height:100%;border-radius:5px;background:var(--signal)"></div>
+          <div style="position:absolute;top:-4px;left:97.8%;width:2px;height:18px;background:var(--risk);border-radius:1px"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--ink3);margin-top:6px">
+          <span style="color:var(--signal);font-weight:500">R$312k atual</span>
+          <span style="color:#185FA5">R$391k projetado</span>
+          <span style="color:var(--risk)">R$400k meta</span>
+        </div>
+        <div style="background:#FCEBEB;border-radius:var(--radius-sm);padding:10px 12px;margin-top:10px">
+          <p style="font-size:12px;color:#791F1F;line-height:1.5"><strong>Alerta IA:</strong> Priorizar Empório Jardins (R$6.200 pot.) e Bar do Zé (R$3.800 pot.) até dia 27 para fechar o gap.</p>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+        <div class="card">
+          <div class="card-title">Top negócios <span style="font-size:11px;color:var(--ink3)">farol de risco</span></div>
+          <div class="deal-row">
+            <div class="deal-init" style="background:#E1F5EE;color:#085041">AS</div>
+            <div style="flex:1"><div style="font-size:13px;font-weight:500;color:var(--ink)">Adega São Bento</div><div style="font-size:11px;color:var(--ink3)">Rafael · up-sell</div></div>
+            <div style="text-align:right"><div style="font-size:13px;font-weight:500">R$890<span class="farol f-verde"></span></div><div style="font-size:10px;color:var(--ink3)">91%</div></div>
+          </div>
+          <div class="deal-row">
+            <div class="deal-init" style="background:#E6F1FB;color:#0C447C">EJ</div>
+            <div style="flex:1"><div style="font-size:13px;font-weight:500;color:var(--ink)">Empório Jardins</div><div style="font-size:11px;color:var(--ink3)">Camila · expansão</div></div>
+            <div style="text-align:right"><div style="font-size:13px;font-weight:500">R$6.2k<span class="farol f-amarelo"></span></div><div style="font-size:10px;color:var(--ink3)">68%</div></div>
+          </div>
+          <div class="deal-row">
+            <div class="deal-init" style="background:#FAEEDA;color:#633806">BZ</div>
+            <div style="flex:1"><div style="font-size:13px;font-weight:500;color:var(--ink)">Bar do Zé</div><div style="font-size:11px;color:var(--ink3)">Rafael · reativação</div></div>
+            <div style="text-align:right"><div style="font-size:13px;font-weight:500">R$3.8k<span class="farol f-amarelo"></span></div><div style="font-size:10px;color:var(--ink3)">74%</div></div>
+          </div>
+          <div class="deal-row">
+            <div class="deal-init" style="background:#FAECE7;color:#712B13">DV</div>
+            <div style="flex:1"><div style="font-size:13px;font-weight:500;color:var(--ink)">Distribuidora Villa</div><div style="font-size:11px;color:var(--ink3)">Lucas · prospecção</div></div>
+            <div style="text-align:right"><div style="font-size:13px;font-weight:500">R$12k<span class="farol f-vermelho"></span></div><div style="font-size:10px;color:var(--ink3)">41%</div></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Performance do time <span class="label-sm label-gold">IA mentor</span></div>
+          <div class="rep-row">
+            <div class="rep-av" style="background:#E1F5EE;color:#085041">CA</div>
+            <div style="flex:1">
+              <div style="font-size:13px;font-weight:500;color:var(--ink)">Camila A.</div>
+              <div style="display:flex;align-items:center;gap:6px;margin-top:4px">
+                <div class="bar-wrap"><div class="bar-fill bar-green" style="width:92%"></div></div>
+                <span style="font-size:12px;font-weight:500;color:var(--ink);min-width:30px">92%</span>
+              </div>
+            </div>
+          </div>
+          <div class="rep-row">
+            <div class="rep-av" style="background:#E6F1FB;color:#0C447C">RF</div>
+            <div style="flex:1">
+              <div style="font-size:13px;font-weight:500;color:var(--ink)">Rafael F.</div>
+              <div style="display:flex;align-items:center;gap:6px;margin-top:4px">
+                <div class="bar-wrap"><div class="bar-fill bar-green" style="width:78%"></div></div>
+                <span style="font-size:12px;font-weight:500;color:var(--ink);min-width:30px">78%</span>
+              </div>
+            </div>
+          </div>
+          <div class="rep-row">
+            <div class="rep-av" style="background:#FAEEDA;color:#633806">LC</div>
+            <div style="flex:1">
+              <div style="font-size:13px;font-weight:500;color:var(--ink)">Lucas C.</div>
+              <div style="display:flex;align-items:center;gap:6px;margin-top:4px">
+                <div class="bar-wrap"><div class="bar-fill bar-amber" style="width:54%"></div></div>
+                <span style="font-size:12px;font-weight:500;color:var(--ink);min-width:30px">54%</span>
+              </div>
+            </div>
+          </div>
+          <div class="rep-row">
+            <div class="rep-av" style="background:#FCEBEB;color:#791F1F">MB</div>
+            <div style="flex:1">
+              <div style="font-size:13px;font-weight:500;color:var(--ink)">Marina B.</div>
+              <div style="display:flex;align-items:center;gap:6px;margin-top:4px">
+                <div class="bar-wrap"><div class="bar-fill bar-red" style="width:31%"></div></div>
+                <span style="font-size:12px;font-weight:500;color:var(--ink);min-width:30px">31%</span>
+              </div>
+            </div>
+          </div>
+          <div style="background:#FAEEDA;border-radius:var(--radius-sm);padding:9px 11px;margin-top:10px">
+            <p style="font-size:12px;color:#633806;line-height:1.5"><strong>IA detectou:</strong> Marina perde 80% na precificação. Sugestão: treinamento em negociação de valor.</p>
+          </div>
+        </div>
+      </div>
+      <div class="oraculo-dark" style="margin-bottom:12px">
+        <div style="font-size:10px;color:var(--gold);letter-spacing:0.6px;text-transform:uppercase;font-weight:500;margin-bottom:8px">Oráculo — linguagem natural</div>
+        <div class="oq">"Qual o risco de não batermos a meta considerando as objeções atuais?"</div>
+        <div class="oa">Risco de não atingir a meta: <span class="oh">64%</span> com o pipeline atual. O gargalo é a taxa de conversão de Lucas e Marina acima de R$5k. Se Empório Jardins + Bar do Zé avançarem, o risco cai para <span class="oh-green">28%</span>.</div>
+      </div>
+      <div class="card">
+        <div class="card-title">Radar de churn silencioso <span class="label-sm label-gold">IA preditiva</span></div>
+        <div class="churn-row">
+          <span class="churn-badge ch-alto">Risco alto</span>
+          <div style="flex:1"><div style="font-size:13px;font-weight:500;color:var(--ink)">Distribuidora Pinheiro</div><div style="font-size:11px;color:var(--ink3)">Volume caiu 61% — 3 pedidos sem resposta</div></div>
+          <div style="font-size:12px;color:var(--ink3)">47 dias</div>
+        </div>
+        <div class="churn-row">
+          <span class="churn-badge ch-alto">Risco alto</span>
+          <div style="flex:1"><div style="font-size:13px;font-weight:500;color:var(--ink)">Cervejaria Lapa</div><div style="font-size:11px;color:var(--ink3)">Sem recompra há 38 dias · padrão de saída detectado</div></div>
+          <div style="font-size:12px;color:var(--ink3)">38 dias</div>
+        </div>
+        <div class="churn-row">
+          <span class="churn-badge ch-medio">Risco médio</span>
+          <div style="flex:1"><div style="font-size:13px;font-weight:500;color:var(--ink)">Empório Moema</div><div style="font-size:11px;color:var(--ink3)">Ticket caiu 34% — possível teste de concorrente</div></div>
+          <div style="font-size:12px;color:var(--ink3)">21 dias</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DIRETOR -->
+<div class="sec-divider" id="diretor" style="border-top:0.5px solid rgba(255,255,255,0.06)">
+  <div class="sd-inner">
+    <div class="sd-title">BI de cúpula — <span>Diretor</span></div>
+    <div class="sd-sub">Domínio de território · Vulnerabilidade da concorrência · Simulador what-if · Tendências</div>
+  </div>
+</div>
+<section class="section">
+  <div style="background:#fff;border:0.5px solid var(--border);border-radius:var(--radius);overflow:hidden">
+    <div style="background:var(--midnight);padding:12px 20px;display:flex;align-items:center;justify-content:space-between">
+      <div style="display:flex;align-items:center;gap:10px">
+        <span style="color:var(--gold);font-size:15px;font-weight:700">SalesLumi IA</span>
+        <span style="color:rgba(255,255,255,0.2)">/</span>
+        <span style="color:rgba(255,255,255,0.55);font-size:13px">BI de cúpula — Diretor</span>
+      </div>
+      <span style="color:rgba(255,255,255,0.3);font-size:12px">Jun 2025 · visão estratégica</span>
+    </div>
+    <div style="padding:16px;background:var(--bone)">
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px">
+        <div class="kpi"><div class="kpi-label">Receita anual (run rate)</div><div class="kpi-val">R$4,1M</div><div class="kpi-sub">+27% vs. 2024</div></div>
+        <div class="kpi"><div class="kpi-label">Market share SP capital</div><div class="kpi-val">18%</div><div class="kpi-sub">+4pp em 6 meses</div></div>
+        <div class="kpi"><div class="kpi-label">Potencial latente</div><div class="kpi-val">R$2,8M</div><div class="kpi-sub" style="color:var(--gold-dark)">não capturado ainda</div></div>
+        <div class="kpi"><div class="kpi-label">Churn rate</div><div class="kpi-val">4,2%</div><div class="kpi-sub">-1,8pp vs. trim. anterior</div></div>
+      </div>
+      <div class="oraculo-dark" style="margin-bottom:12px">
+        <div style="font-size:10px;color:var(--gold);letter-spacing:0.6px;text-transform:uppercase;font-weight:500;margin-bottom:8px">Oráculo — inteligência em linguagem natural</div>
+        <div class="oq">"Qual região de SP tem maior potencial para o nosso SKU de entrada este mês?"</div>
+        <div class="oa"><span class="oh">Zona Leste de SP</span> — densidade 3× superior, apenas <span class="oh">6% de penetração</span> atual. Potencial estimado de <span class="oh-green">R$480k em 90 dias</span> com 2 vendedores. Segunda opção: ABC Paulista, R$310k.</div>
+      </div>
+      <div class="card" style="margin-bottom:12px">
+        <div class="card-title">Domínio de território — SP capital <span class="label-sm label-gold">DNA + Censo + Maps</span></div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="display:flex;align-items:center;gap:10px">
+            <span style="font-size:13px;font-weight:500;color:var(--ink);min-width:120px">Vila Madalena</span>
+            <div class="bar-wrap" style="height:7px"><div class="bar-fill bar-green" style="width:88%"></div></div>
+            <span style="font-size:12px;font-weight:500;min-width:48px;text-align:right">R$890k</span>
+            <span class="label-sm label-teal">Dominando</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <span style="font-size:13px;font-weight:500;color:var(--ink);min-width:120px">Pinheiros</span>
+            <div class="bar-wrap" style="height:7px"><div class="bar-fill bar-green" style="width:72%"></div></div>
+            <span style="font-size:12px;font-weight:500;min-width:48px;text-align:right">R$720k</span>
+            <span class="label-sm label-teal">Dominando</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <span style="font-size:13px;font-weight:500;color:var(--ink);min-width:120px">Jardins</span>
+            <div class="bar-wrap" style="height:7px"><div class="bar-fill" style="width:55%;background:#378ADD"></div></div>
+            <span style="font-size:12px;font-weight:500;min-width:48px;text-align:right">R$540k</span>
+            <span class="label-sm label-blue">Crescendo</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px">
+            <span style="font-size:13px;font-weight:500;color:var(--ink);min-width:120px">Zona Leste</span>
+            <div class="bar-wrap" style="height:7px"><div class="bar-fill" style="width:9%;background:var(--risk)"></div></div>
+            <span style="font-size:12px;font-weight:500;min-width:48px;text-align:right">R$88k</span>
+            <span class="label-sm label-red">Gap crítico</span>
+          </div>
+        </div>
+        <div style="background:#FAEEDA;border-radius:var(--radius-sm);padding:10px 12px;margin-top:12px">
+          <p style="font-size:12px;color:#633806;line-height:1.5"><strong>Buraco branco:</strong> Zona Leste e ABC = 34% dos estabelecimentos, apenas 7% da receita atual. Oportunidade de R$2,1M não capturada.</p>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="card">
+          <div class="card-title">Vulnerabilidade da concorrência</div>
+          <div class="churn-row">
+            <span class="churn-badge" style="background:#E1F5EE;color:#085041">Atacar</span>
+            <div style="flex:1"><div style="font-size:13px;font-weight:500;color:var(--ink)">Distribuidora Alfa</div><div style="font-size:11px;color:var(--ink3)">Avaliação 2,8★ — atrasos reportados</div></div>
+            <div style="text-align:right"><div style="font-size:13px;font-weight:500;color:var(--signal)">R$380k</div></div>
+          </div>
+          <div class="churn-row">
+            <span class="churn-badge" style="background:#E1F5EE;color:#085041">Atacar</span>
+            <div style="flex:1"><div style="font-size:13px;font-weight:500;color:var(--ink)">Bebidas Sul</div><div style="font-size:11px;color:var(--ink3)">Rescisão com 3 fornecedores premium</div></div>
+            <div style="text-align:right"><div style="font-size:13px;font-weight:500;color:var(--signal)">R$210k</div></div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Simulador what-if <span class="label-sm label-gold">preditivo</span></div>
+          <p style="font-size:12px;color:var(--ink3);margin-bottom:12px">Cenário: contratar vendedores para Zona Leste</p>
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+            <label style="font-size:13px;color:var(--ink3);min-width:120px">Novos vendedores</label>
+            <input type="range" min="1" max="10" value="3" id="reps" step="1" style="flex:1">
+            <span style="font-size:13px;font-weight:500;min-width:20px" id="reps-out">3</span>
+          </div>
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px">
+            <label style="font-size:13px;color:var(--ink3);min-width:120px">Meses de rampa</label>
+            <input type="range" min="1" max="6" value="2" id="ramp" step="1" style="flex:1">
+            <span style="font-size:13px;font-weight:500;min-width:20px" id="ramp-out">2</span>
+          </div>
+          <div style="background:#E1F5EE;border-radius:var(--radius-sm);padding:12px 14px">
+            <p style="font-size:13px;color:#085041;line-height:1.5"><strong>Projeção IA:</strong> <span id="r-reps">3</span> vendedores, <span id="r-ramp">2</span> meses de rampa → <strong id="r-rev">R$486k</strong> incremental no 1º ano. ROI <strong id="r-roi">4,1×</strong>.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- BRANDBOOK -->
+<div class="sec-divider" id="brand" style="border-top:0.5px solid rgba(255,255,255,0.06)">
+  <div class="sd-inner">
+    <div class="sd-title"><span>Brand</span>book</div>
+    <div class="sd-sub">Ícone · Paleta · Tipografia · Tom de voz · Princípios visuais</div>
+  </div>
+</div>
+<section class="section">
+  <!-- ICON HERO -->
+  <div style="background:var(--midnight);border-radius:var(--radius);padding:40px 32px;margin-bottom:24px;display:flex;align-items:center;gap:32px">
+    <svg width="80" height="80" viewBox="0 0 64 64" fill="none">
+      <rect width="64" height="64" rx="16" fill="#0F2240"/>
+      <circle cx="32" cy="32" r="7" fill="#E5B84A"/>
+      <circle cx="32" cy="32" r="14" fill="#E5B84A" opacity="0.07"/>
+      <circle cx="32" cy="11" r="2.5" fill="#E5B84A" opacity="0.9"/>
+      <circle cx="32" cy="53" r="2.5" fill="#E5B84A" opacity="0.5"/>
+      <circle cx="11" cy="32" r="2.5" fill="#E5B84A" opacity="0.7"/>
+      <circle cx="53" cy="32" r="2.5" fill="#E5B84A" opacity="0.4"/>
+      <circle cx="17" cy="17" r="2" fill="#E5B84A" opacity="0.6"/>
+      <circle cx="47" cy="17" r="2" fill="#E5B84A" opacity="0.35"/>
+      <circle cx="17" cy="47" r="2" fill="#E5B84A" opacity="0.3"/>
+      <line x1="32" y1="25" x2="32" y2="13.5" stroke="#E5B84A" stroke-width="0.75" stroke-opacity="0.45"/>
+      <line x1="32" y1="39" x2="32" y2="50.5" stroke="#E5B84A" stroke-width="0.75" stroke-opacity="0.3"/>
+      <line x1="25" y1="32" x2="13.5" y2="32" stroke="#E5B84A" stroke-width="0.75" stroke-opacity="0.4"/>
+      <line x1="39" y1="32" x2="50.5" y2="32" stroke="#E5B84A" stroke-width="0.75" stroke-opacity="0.25"/>
+      <line x1="26.9" y1="26.9" x2="19" y2="19" stroke="#E5B84A" stroke-width="0.75" stroke-opacity="0.35"/>
+      <line x1="37.1" y1="26.9" x2="45" y2="19" stroke="#E5B84A" stroke-width="0.75" stroke-opacity="0.2"/>
+      <line x1="26.9" y1="37.1" x2="19" y2="45" stroke="#E5B84A" stroke-width="0.75" stroke-opacity="0.2"/>
+    </svg>
+    <div>
+      <div style="font-size:38px;font-weight:900;color:#fff;letter-spacing:-1.5px;line-height:1">Sales<span style="color:var(--gold)">Lumi</span></div>
+      <div style="font-size:13px;font-weight:300;color:rgba(255,255,255,0.3);letter-spacing:3px;text-transform:uppercase;margin-top:4px">Inteligência Artificial</div>
+      <div style="font-size:13px;color:rgba(255,255,255,0.35);margin-top:12px;max-width:400px;line-height:1.6">Uma partícula inteligente que irradia clareza. O vendedor no centro, a IA expandindo sua visão em todas as direções.</div>
+    </div>
+  </div>
+
+  <div class="bb-section">
+    <div class="bb-label">Paleta de cores</div>
+    <div class="swatch-grid" style="margin-bottom:10px">
+      <div class="swatch"><div class="sw-color" style="background:#0A1628"></div><div class="sw-info"><div class="sw-name">Midnight</div><div class="sw-hex">#0A1628</div><div class="sw-role">Primária · fundos, topbars</div></div></div>
+      <div class="swatch"><div class="sw-color" style="background:#E5B84A"></div><div class="sw-info"><div class="sw-name">Lumi Gold</div><div class="sw-hex">#E5B84A</div><div class="sw-role">Destaque · CTA, ícone, acento</div></div></div>
+      <div class="swatch"><div class="sw-color" style="background:#1D9E75"></div><div class="sw-info"><div class="sw-name">Signal</div><div class="sw-hex">#1D9E75</div><div class="sw-role">Sucesso · DNA, metas</div></div></div>
+      <div class="swatch"><div class="sw-color" style="background:#F5F4F0"></div><div class="sw-info"><div class="sw-name">Bone</div><div class="sw-hex">#F5F4F0</div><div class="sw-role">Fundo claro · app, web</div></div></div>
+    </div>
+    <div class="swatch-grid">
+      <div class="swatch"><div class="sw-color" style="background:#152035"></div><div class="sw-info"><div class="sw-name">Navy</div><div class="sw-hex">#152035</div><div class="sw-role">Secundária · cards dark</div></div></div>
+      <div class="swatch"><div class="sw-color" style="background:#B8922A"></div><div class="sw-info"><div class="sw-name">Lumi Dark</div><div class="sw-hex">#B8922A</div><div class="sw-role">Lumi em fundo claro</div></div></div>
+      <div class="swatch"><div class="sw-color" style="background:#E24B4A"></div><div class="sw-info"><div class="sw-name">Risk</div><div class="sw-hex">#E24B4A</div><div class="sw-role">Alerta · churn, risco</div></div></div>
+      <div class="swatch"><div class="sw-color" style="background:#1C1C1A"></div><div class="sw-info"><div class="sw-name">Ink</div><div class="sw-hex">#1C1C1A</div><div class="sw-role">Texto body · fundos claros</div></div></div>
+    </div>
+  </div>
+
+  <div class="bb-section">
+    <div class="bb-label">Tipografia</div>
+    <div style="background:var(--midnight);border-radius:var(--radius);padding:28px;margin-bottom:12px">
+      <div style="font-size:42px;font-weight:900;color:#fff;letter-spacing:-2px;line-height:1;margin-bottom:4px">Sales<span style="color:var(--gold)">Lumi</span> <span style="font-weight:300;font-size:28px;color:rgba(255,255,255,0.3);letter-spacing:3px">IA</span></div>
+      <div style="font-size:13px;color:rgba(255,255,255,0.3);margin-bottom:20px">Inter Black 900 + Inter Light 300</div>
+      <hr style="border:none;border-top:0.5px solid rgba(255,255,255,0.08);margin-bottom:16px">
+      <div style="font-size:14px;color:rgba(255,255,255,0.55);line-height:1.65">A inteligência que o vendedor <strong style="color:rgba(255,255,255,0.85)">precisava ter</strong>, mas nunca teve tempo de construir.</div>
+    </div>
+    <div style="background:#fff;border:0.5px solid var(--border);border-radius:var(--radius);padding:16px 20px">
+      <div class="type-row-bb">
+        <div style="font-size:30px;font-weight:900;color:var(--ink);letter-spacing:-1px;line-height:1;flex:1">Inteligência que vende.</div>
+        <div class="type-meta-col">Display · 900 · −1px</div>
+      </div>
+      <div class="type-row-bb">
+        <div style="font-size:20px;font-weight:700;color:var(--ink);letter-spacing:-0.3px;flex:1">Dossiê 360° — Adega São Bento</div>
+        <div class="type-meta-col">Heading · 700 · −0.3px</div>
+      </div>
+      <div class="type-row-bb">
+        <div style="font-size:15px;font-weight:500;color:var(--ink);flex:1">SKU alvo: Kit Vinhos Argentinos Premium</div>
+        <div class="type-meta-col">Subheading · 500</div>
+      </div>
+      <div class="type-row-bb">
+        <div style="font-size:13px;color:var(--ink);line-height:1.65;flex:1">A IA analisa o histórico e entrega a diretriz antes da reunião.</div>
+        <div class="type-meta-col">Body · 400 · lh 1.65</div>
+      </div>
+      <div class="type-row-bb">
+        <div style="font-size:11px;font-weight:500;letter-spacing:1px;text-transform:uppercase;color:var(--ink3);flex:1">Inteligência preditiva</div>
+        <div class="type-meta-col">Label · 500 · +1px</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="bb-section">
+    <div class="bb-label">Princípios visuais</div>
+    <div class="principle-grid">
+      <div class="principle-card"><div class="pc-num">01</div><div class="pc-title">Centro vivo</div><div class="pc-body">Todo layout tem um núcleo claro. A informação mais importante irradia para fora — nunca dispersa igualmente.</div></div>
+      <div class="principle-card"><div class="pc-num">02</div><div class="pc-title">Peso com propósito</div><div class="pc-body">Tipografia pesada só onde merece atenção máxima. O resto respira em peso leve ou regular.</div></div>
+      <div class="principle-card"><div class="pc-num">03</div><div class="pc-title">Ouro é escasso</div><div class="pc-body">Lumi Gold aparece uma vez por tela. Se está em todo lugar, não está em lugar nenhum.</div></div>
+    </div>
+  </div>
+
+  <div class="bb-section" style="margin-bottom:0">
+    <div class="bb-label">Tom de voz — o nerd conselheiro</div>
+    <div class="vrow">
+      <div class="vcard-do"><div class="vtag vtag-do">Aprovado</div><div class="vtext-do">"A taxa de conversão está 31% abaixo da média. O histórico indica que a objeção mais provável é logística."</div></div>
+      <div class="vcard-dont"><div class="vtag vtag-dont">Proibido</div><div class="vtext-dont">"Cara, esse cliente tá quente! Vai lá e manda ver, é hora de botar a faca na caveira!"</div></div>
+    </div>
+    <div class="vrow">
+      <div class="vcard-do"><div class="vtag vtag-do">Aprovado</div><div class="vtext-do">"Três clientes com perfil idêntico iniciaram com o Kit Premium. Giro médio: 11 dias. Margem 40% superior."</div></div>
+      <div class="vcard-dont"><div class="vtag vtag-dont">Proibido</div><div class="vtext-dont">"Conforme supracitado no relatório, sugere-se a consideração do produto em questão para fins comerciais."</div></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <p><strong>SalesLumi IA</strong> · Demo · Desenvolvido com Claude por Anthropic · 2025</p>
+</footer>
+
+<script>
+  const repsEl = document.getElementById('reps');
+  const rampEl = document.getElementById('ramp');
+  function calc() {
+    const n = parseInt(repsEl.value), m = parseInt(rampEl.value);
+    document.getElementById('reps-out').textContent = n;
+    document.getElementById('ramp-out').textContent = m;
+    document.getElementById('r-reps').textContent = n;
+    document.getElementById('r-ramp').textContent = m;
+    const rev = Math.round(n * 162 * (1 - m * 0.08));
+    const roi = (rev / Math.round(n * 120)).toFixed(1);
+    document.getElementById('r-rev').textContent = 'R$' + rev + 'k';
+    document.getElementById('r-roi').textContent = roi + '×';
+  }
+  repsEl.addEventListener('input', calc);
+  rampEl.addEventListener('input', calc);
+
+  const links = document.querySelectorAll('.nav-link');
+  const sections = ['vendedor','gerente','diretor','brand'];
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(id => {
+      const el = document.getElementById(id);
+      if (el && window.scrollY >= el.offsetTop - 80) current = id;
+    });
+    links.forEach(l => {
+      l.classList.toggle('active', l.getAttribute('href') === '#' + current);
+    });
+  });
+</script>
+</body>
+</html>
