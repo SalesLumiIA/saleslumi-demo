@@ -1,0 +1,1293 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SalesLumi IA — Vendedor Desktop</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<style>
+:root {
+  --mid: #0A1628; --navy: #0F2240; --navy2: #152035;
+  --gold: #E5B84A; --gold-d: #B8922A;
+  --sig: #1D9E75; --risk: #E24B4A; --warn: #EF9F27;
+  --bone: #F5F4F0; --ink: #1C1C1A; --ink2: #444441; --ink3: #888780;
+  --bd: rgba(0,0,0,0.08); --bd-l: rgba(255,255,255,0.08);
+  --r: 10px; --r-sm: 6px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bone);color:var(--ink);overflow:hidden}
+
+/* LAYOUT */
+.app{display:flex;height:100vh;width:100vw}
+
+/* SIDEBAR */
+.sidebar{width:220px;min-width:220px;background:var(--mid);display:flex;flex-direction:column;border-right:0.5px solid var(--bd-l)}
+.sb-logo{padding:18px 16px 14px;border-bottom:0.5px solid var(--bd-l);display:flex;align-items:center;gap:10px}
+.sb-wordmark{font-size:16px;font-weight:900;color:#fff;letter-spacing:-0.5px}
+.sb-wordmark span{color:var(--gold)}
+.sb-ia{font-size:10px;font-weight:300;color:rgba(255,255,255,0.3);letter-spacing:2px;margin-left:2px}
+.sb-user{padding:12px 16px;border-bottom:0.5px solid var(--bd-l);display:flex;align-items:center;gap:10px}
+.sb-av{width:32px;height:32px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--mid);flex-shrink:0}
+.sb-uname{font-size:13px;font-weight:500;color:#fff}
+.sb-urole{font-size:11px;color:rgba(255,255,255,0.35)}
+.sb-nav{flex:1;padding:10px 0;overflow-y:auto}
+.sb-section{font-size:10px;font-weight:500;letter-spacing:0.8px;text-transform:uppercase;color:rgba(255,255,255,0.25);padding:8px 16px 4px}
+.sb-item{display:flex;align-items:center;gap:10px;padding:9px 16px;cursor:pointer;transition:all 0.15s;border-left:2px solid transparent;color:rgba(255,255,255,0.45);font-size:13px}
+.sb-item i{font-size:16px;flex-shrink:0}
+.sb-item:hover{background:rgba(255,255,255,0.05);color:rgba(255,255,255,0.75)}
+.sb-item.active{background:rgba(229,184,74,0.1);color:var(--gold);border-left-color:var(--gold)}
+.sb-badge{margin-left:auto;background:var(--risk);color:#fff;font-size:10px;font-weight:600;padding:1px 6px;border-radius:10px}
+.sb-badge-gold{margin-left:auto;background:rgba(229,184,74,0.2);color:var(--gold);font-size:10px;font-weight:600;padding:1px 6px;border-radius:10px}
+.sb-footer{padding:12px 16px;border-top:0.5px solid var(--bd-l)}
+.sb-kpi-row{display:flex;gap:8px;margin-bottom:8px}
+.sb-kpi{flex:1;background:rgba(255,255,255,0.05);border-radius:var(--r-sm);padding:8px 10px}
+.sb-kpi-label{font-size:10px;color:rgba(255,255,255,0.3);margin-bottom:2px}
+.sb-kpi-val{font-size:16px;font-weight:700;color:#fff}
+.sb-kpi-sub{font-size:10px;color:var(--sig)}
+
+/* MAIN */
+.main{flex:1;display:flex;flex-direction:column;min-width:0;overflow:hidden}
+.topbar{height:52px;background:#fff;border-bottom:0.5px solid var(--bd);display:flex;align-items:center;padding:0 20px;gap:12px;flex-shrink:0}
+.tb-title{font-size:15px;font-weight:600;color:var(--ink);flex:1}
+.tb-date{font-size:12px;color:var(--ink3)}
+.tb-btn{display:flex;align-items:center;gap:6px;padding:6px 12px;border-radius:var(--r-sm);background:var(--mid);color:#fff;font-size:12px;font-weight:500;border:none;cursor:pointer;transition:opacity 0.15s}
+.tb-btn:hover{opacity:0.85}
+.tb-btn-outline{background:transparent;color:var(--ink2);border:0.5px solid var(--bd)}
+.tb-btn-outline:hover{background:var(--bone)}
+.content{flex:1;overflow-y:auto;overflow-x:hidden}
+
+/* VIEWS */
+.view{display:none}
+.view.active{display:block}
+
+/* ── DASHBOARD VIEW ── */
+.dash-grid{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px;padding:20px 20px 0}
+.kpi-card{background:#fff;border:0.5px solid var(--bd);border-radius:var(--r);padding:14px 16px}
+.kc-label{font-size:11px;color:var(--ink3);margin-bottom:4px}
+.kc-val{font-size:24px;font-weight:700;color:var(--ink);letter-spacing:-0.5px}
+.kc-sub{font-size:11px;margin-top:3px;display:flex;align-items:center;gap:3px}
+.up{color:var(--sig)}.dn{color:var(--risk)}.neu{color:var(--ink3)}
+.dash-body{display:grid;grid-template-columns:1fr 380px;gap:12px;padding:12px 20px 20px}
+.dash-left{display:flex;flex-direction:column;gap:12px}
+.card{background:#fff;border:0.5px solid var(--bd);border-radius:var(--r);padding:14px 16px}
+.card-hd{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:12px;display:flex;align-items:center;justify-content:space-between}
+.tag{font-size:10px;font-weight:500;letter-spacing:0.5px;text-transform:uppercase;padding:2px 8px;border-radius:10px}
+.tag-gold{background:#FAEEDA;color:#633806}
+.tag-teal{background:#E1F5EE;color:#085041}
+.tag-blue{background:#E6F1FB;color:#0C447C}
+.tag-red{background:#FCEBEB;color:#791F1F}
+.tag-mid{background:var(--navy2);color:rgba(255,255,255,0.7)}
+
+/* PIPELINE */
+.pipe-cols{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.pipe-col-hd{font-size:11px;font-weight:600;color:var(--ink2);margin-bottom:8px;display:flex;align-items:center;justify-content:space-between}
+.pipe-count{background:var(--bone);color:var(--ink3);font-size:10px;font-weight:600;padding:1px 7px;border-radius:10px}
+.pipe-deal{background:var(--bone);border-radius:var(--r-sm);padding:10px 12px;margin-bottom:6px;cursor:pointer;transition:all 0.15s;border:0.5px solid transparent}
+.pipe-deal:hover{border-color:var(--gold);background:#fff}
+.pd-name{font-size:12px;font-weight:600;color:var(--ink);margin-bottom:2px}
+.pd-val{font-size:13px;font-weight:700;color:var(--ink);margin-bottom:4px}
+.pd-meta{font-size:11px;color:var(--ink3);display:flex;align-items:center;gap:4px}
+.farol{width:7px;height:7px;border-radius:50%;display:inline-block}
+.f-g{background:var(--sig)}.f-a{background:var(--warn)}.f-r{background:var(--risk)}
+.prob-bar{height:3px;background:#eee;border-radius:2px;margin-top:6px;overflow:hidden}
+.prob-fill{height:100%;border-radius:2px;background:var(--sig)}
+
+/* AGENDA */
+.agenda-layout{display:grid;grid-template-columns:1fr 340px;gap:12px;padding:20px}
+.agenda-days{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;margin-bottom:16px}
+.ag-day{background:#fff;border:0.5px solid var(--bd);border-radius:var(--r-sm);padding:8px;text-align:center;cursor:pointer;transition:all 0.15s}
+.ag-day:hover{border-color:var(--gold)}
+.ag-day.today{background:var(--mid);border-color:var(--mid)}
+.ag-day.has-event{border-color:var(--gold)}
+.ag-day-num{font-size:14px;font-weight:700;color:var(--ink)}
+.ag-day.today .ag-day-num{color:var(--gold)}
+.ag-day-name{font-size:10px;color:var(--ink3);margin-bottom:2px}
+.ag-day.today .ag-day-name{color:rgba(255,255,255,0.4)}
+.ag-dot{width:5px;height:5px;border-radius:50%;background:var(--gold);margin:3px auto 0}
+.event-list{display:flex;flex-direction:column;gap:8px}
+.event-card{background:#fff;border:0.5px solid var(--bd);border-radius:var(--r);padding:12px 14px;cursor:pointer;transition:all 0.15s;border-left:3px solid var(--bd)}
+.event-card:hover{border-color:var(--gold);border-left-color:var(--gold)}
+.event-card.visit{border-left-color:var(--sig)}
+.event-card.call{border-left-color:#378ADD}
+.event-card.prospect{border-left-color:var(--gold)}
+.ev-time{font-size:11px;color:var(--ink3);margin-bottom:3px}
+.ev-name{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:2px}
+.ev-meta{font-size:11px;color:var(--ink3);display:flex;align-items:center;gap:6px}
+.ev-tag{font-size:10px;font-weight:500;padding:2px 7px;border-radius:10px}
+.ag-right{display:flex;flex-direction:column;gap:12px}
+.route-card{background:var(--mid);border-radius:var(--r);padding:14px 16px}
+.rc-title{font-size:12px;color:rgba(255,255,255,0.4);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.rc-title i{color:var(--gold)}
+.route-stop{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:0.5px solid rgba(255,255,255,0.07)}
+.route-stop:last-child{border-bottom:none}
+.rs-num{width:22px;height:22px;border-radius:50%;background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.5);font-size:10px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.rs-num.active{background:var(--gold);color:var(--mid)}
+.rs-name{font-size:13px;font-weight:500;color:#fff}
+.rs-meta{font-size:11px;color:rgba(255,255,255,0.35);margin-top:1px}
+.rs-dist{font-size:11px;color:var(--gold);margin-left:auto;flex-shrink:0}
+.suggest-list{display:flex;flex-direction:column;gap:6px}
+.suggest-item{background:#fff;border:0.5px solid var(--bd);border-radius:var(--r-sm);padding:10px 12px;cursor:pointer;transition:all 0.15s;display:flex;align-items:center;gap:10px}
+.suggest-item:hover{border-color:var(--gold)}
+.si-icon{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.si-name{font-size:12px;font-weight:600;color:var(--ink);flex:1}
+.si-meta{font-size:11px;color:var(--ink3)}
+.si-dna{font-size:11px;font-weight:600;color:var(--sig)}
+
+/* MAPA */
+.map-layout{display:grid;grid-template-columns:1fr 320px;height:calc(100vh - 52px)}
+.map-area{position:relative;background:#e8e8e2;overflow:hidden}
+.map-bg{position:absolute;inset:0}
+.map-road-h{position:absolute;left:0;right:0;background:rgba(255,255,255,0.7);height:2px}
+.map-road-v{position:absolute;top:0;bottom:0;background:rgba(255,255,255,0.7);width:2px}
+.map-road-sm-h{position:absolute;left:0;right:0;background:rgba(255,255,255,0.4);height:1px}
+.map-road-sm-v{position:absolute;top:0;bottom:0;background:rgba(255,255,255,0.4);width:1px}
+.map-block{position:absolute;background:rgba(0,0,0,0.04);border-radius:2px}
+.map-label-street{position:absolute;font-size:10px;color:rgba(0,0,0,0.35);white-space:nowrap;font-family:'Inter',sans-serif}
+.map-pin{position:absolute;transform:translate(-50%,-50%);cursor:pointer;transition:transform 0.15s}
+.map-pin:hover{transform:translate(-50%,-50%) scale(1.15)}
+.pin-wrap{display:flex;flex-direction:column;align-items:center}
+.pin-bubble{padding:4px 10px;border-radius:20px;font-size:11px;font-weight:600;white-space:nowrap;border:2px solid #fff}
+.pin-dot{width:8px;height:8px;border-radius:50%;background:rgba(0,0,0,0.2);margin-top:2px}
+.pin-active{background:var(--sig);color:#fff}
+.pin-risk{background:var(--risk);color:#fff}
+.pin-warn{background:var(--warn);color:#fff}
+.pin-prospect{background:var(--gold);color:var(--mid)}
+.pin-you{background:var(--mid);color:var(--gold)}
+.map-controls{position:absolute;bottom:16px;left:16px;display:flex;flex-direction:column;gap:6px}
+.map-ctrl-btn{background:#fff;border:0.5px solid var(--bd);border-radius:var(--r-sm);padding:7px 10px;font-size:12px;font-weight:500;color:var(--ink);cursor:pointer;display:flex;align-items:center;gap:6px;transition:all 0.15s}
+.map-ctrl-btn:hover{background:var(--bone)}
+.map-ctrl-btn.on{background:var(--mid);color:var(--gold);border-color:var(--mid)}
+.map-legend{position:absolute;bottom:16px;right:16px;background:#fff;border:0.5px solid var(--bd);border-radius:var(--r);padding:10px 12px;display:flex;flex-direction:column;gap:5px}
+.ml-item{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--ink2)}
+.ml-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.map-sidebar{background:#fff;border-left:0.5px solid var(--bd);overflow-y:auto;padding:16px}
+.client-list{display:flex;flex-direction:column;gap:8px}
+.client-item{border:0.5px solid var(--bd);border-radius:var(--r);padding:12px 14px;cursor:pointer;transition:all 0.15s}
+.client-item:hover{border-color:var(--gold)}
+.client-item.selected{border-color:var(--gold);background:#FFFBF0}
+.ci-head{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.ci-init{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+.ci-name{font-size:13px;font-weight:600;color:var(--ink)}
+.ci-type{font-size:11px;color:var(--ink3)}
+.ci-stats{display:flex;gap:8px}
+.ci-stat{flex:1;background:var(--bone);border-radius:var(--r-sm);padding:5px 8px}
+.ci-stat-label{font-size:10px;color:var(--ink3)}
+.ci-stat-val{font-size:12px;font-weight:600;color:var(--ink)}
+.health-bar{height:3px;background:#eee;border-radius:2px;margin-top:5px;overflow:hidden}
+.health-fill{height:100%;border-radius:2px}
+
+/* IA CHAT */
+.chat-layout{display:grid;grid-template-columns:1fr 300px;height:calc(100vh - 52px)}
+.chat-main{display:flex;flex-direction:column;border-right:0.5px solid var(--bd)}
+.chat-header{padding:14px 20px;border-bottom:0.5px solid var(--bd);display:flex;align-items:center;gap:12px;background:#fff}
+.chat-ai-av{width:36px;height:36px;border-radius:10px;background:var(--mid);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.chat-messages{flex:1;overflow-y:auto;padding:20px;display:flex;flex-direction:column;gap:12px;background:var(--bone)}
+.msg-user{align-self:flex-end;max-width:70%}
+.msg-ai{align-self:flex-start;max-width:80%}
+.msg-bubble-user{background:var(--mid);color:#fff;padding:10px 14px;border-radius:16px 16px 4px 16px;font-size:13px;line-height:1.55}
+.msg-bubble-ai{background:#fff;color:var(--ink);padding:10px 14px;border-radius:16px 16px 16px 4px;font-size:13px;line-height:1.6;border:0.5px solid var(--bd)}
+.msg-bubble-ai strong{color:var(--ink);font-weight:600}
+.msg-time{font-size:10px;color:var(--ink3);margin-top:3px;text-align:right}
+.msg-time-left{font-size:10px;color:var(--ink3);margin-top:3px}
+.chat-input-area{padding:14px 20px;background:#fff;border-top:0.5px solid var(--bd)}
+.chat-input-row{display:flex;gap:8px;align-items:center}
+.chat-input{flex:1;padding:10px 14px;border-radius:20px;border:0.5px solid var(--bd);font-size:13px;font-family:'Inter',sans-serif;background:var(--bone);outline:none;transition:border-color 0.15s}
+.chat-input:focus{border-color:var(--gold)}
+.chat-send{width:36px;height:36px;border-radius:50%;background:var(--mid);color:var(--gold);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:opacity 0.15s;flex-shrink:0}
+.chat-send:hover{opacity:0.85}
+.chat-suggestions{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:10px}
+.chat-sug{font-size:11px;padding:5px 10px;border-radius:12px;border:0.5px solid var(--bd);background:#fff;color:var(--ink2);cursor:pointer;transition:all 0.15s;white-space:nowrap}
+.chat-sug:hover{border-color:var(--gold);color:var(--gold)}
+.chat-right{overflow-y:auto;padding:16px;background:#fff}
+.context-section{margin-bottom:16px}
+.ctx-title{font-size:11px;font-weight:600;letter-spacing:0.6px;text-transform:uppercase;color:var(--ink3);margin-bottom:8px}
+.ctx-item{background:var(--bone);border-radius:var(--r-sm);padding:10px 12px;margin-bottom:6px;cursor:pointer;transition:border 0.15s;border:0.5px solid transparent}
+.ctx-item:hover{border-color:var(--gold)}
+.ctx-item-name{font-size:12px;font-weight:600;color:var(--ink)}
+.ctx-item-meta{font-size:11px;color:var(--ink3);margin-top:1px}
+.typing-indicator{display:flex;gap:4px;align-items:center;padding:10px 14px;background:#fff;border-radius:16px 16px 16px 4px;border:0.5px solid var(--bd);align-self:flex-start}
+.typing-dot{width:7px;height:7px;border-radius:50%;background:var(--ink3);animation:pulse 1.2s ease-in-out infinite}
+.typing-dot:nth-child(2){animation-delay:0.2s}
+.typing-dot:nth-child(3){animation-delay:0.4s}
+@keyframes pulse{0%,80%,100%{opacity:0.3}40%{opacity:1}}
+.ai-tag{display:inline-flex;align-items:center;gap:4px;background:var(--navy2);color:var(--gold);font-size:10px;font-weight:500;padding:2px 8px;border-radius:10px;margin-bottom:6px}
+.insight-pill{display:inline-flex;align-items:center;gap:4px;background:#E1F5EE;color:#085041;font-size:11px;padding:4px 10px;border-radius:20px;margin:3px 3px 3px 0}
+
+/* TOAST */
+.toast{position:fixed;bottom:24px;right:24px;background:var(--mid);color:#fff;padding:12px 18px;border-radius:var(--r);font-size:13px;display:flex;align-items:center;gap:8px;border-left:3px solid var(--gold);z-index:999;opacity:0;transform:translateY(8px);transition:all 0.3s;pointer-events:none}
+.toast.show{opacity:1;transform:translateY(0)}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.4);z-index:500;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity 0.2s}
+.modal-overlay.open{opacity:1;pointer-events:all}
+.modal{background:#fff;border-radius:var(--r);padding:24px;width:480px;max-height:80vh;overflow-y:auto;transform:translateY(12px);transition:transform 0.2s}
+.modal-overlay.open .modal{transform:translateY(0)}
+.modal-hd{font-size:16px;font-weight:700;color:var(--ink);margin-bottom:4px}
+.modal-sub{font-size:13px;color:var(--ink3);margin-bottom:16px}
+.modal-close{position:absolute;top:16px;right:16px;background:none;border:none;font-size:18px;color:var(--ink3);cursor:pointer}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(0,0,0,0.15);border-radius:4px}
+</style>
+</head>
+<body>
+<div class="app">
+
+<!-- SIDEBAR -->
+<aside class="sidebar">
+  <div class="sb-logo">
+    <svg width="26" height="26" viewBox="0 0 64 64" fill="none">
+      <rect width="64" height="64" rx="14" fill="#0F2240"/>
+      <circle cx="32" cy="32" r="7" fill="#E5B84A"/>
+      <circle cx="32" cy="11" r="2.5" fill="#E5B84A" opacity="0.9"/>
+      <circle cx="32" cy="53" r="2.5" fill="#E5B84A" opacity="0.5"/>
+      <circle cx="11" cy="32" r="2.5" fill="#E5B84A" opacity="0.7"/>
+      <circle cx="53" cy="32" r="2.5" fill="#E5B84A" opacity="0.4"/>
+      <circle cx="17" cy="17" r="2" fill="#E5B84A" opacity="0.6"/>
+      <circle cx="47" cy="17" r="2" fill="#E5B84A" opacity="0.3"/>
+      <line x1="32" y1="25" x2="32" y2="13.5" stroke="#E5B84A" stroke-width="0.8" stroke-opacity="0.5"/>
+      <line x1="25" y1="32" x2="13.5" y2="32" stroke="#E5B84A" stroke-width="0.8" stroke-opacity="0.4"/>
+      <line x1="39" y1="32" x2="50.5" y2="32" stroke="#E5B84A" stroke-width="0.8" stroke-opacity="0.25"/>
+      <line x1="26.9" y1="26.9" x2="19" y2="19" stroke="#E5B84A" stroke-width="0.8" stroke-opacity="0.35"/>
+    </svg>
+    <div>
+      <span class="sb-wordmark">Sales<span>Lumi</span></span>
+      <span class="sb-ia">IA</span>
+    </div>
+  </div>
+
+  <div class="sb-user">
+    <div class="sb-av">RF</div>
+    <div>
+      <div class="sb-uname">Rafael Fonseca</div>
+      <div class="sb-urole">Executivo de contas · SP</div>
+    </div>
+  </div>
+
+  <nav class="sb-nav">
+    <div class="sb-section">Principal</div>
+    <div class="sb-item active" onclick="showView('dash')">
+      <i class="ti ti-layout-dashboard"></i> Dashboard
+    </div>
+    <div class="sb-item" onclick="showView('chat')">
+      <i class="ti ti-message-circle"></i> IA Consultora
+      <span class="sb-badge-gold">3</span>
+    </div>
+
+    <div class="sb-section">Carteira</div>
+    <div class="sb-item" onclick="showView('mapa')">
+      <i class="ti ti-map-pin"></i> Mapa da carteira
+    </div>
+    <div class="sb-item" onclick="showView('agenda')">
+      <i class="ti ti-calendar"></i> Agenda inteligente
+      <span class="sb-badge">2</span>
+    </div>
+    <div class="sb-item" onclick="showView('pipe')">
+      <i class="ti ti-chart-kanban"></i> Pipeline
+    </div>
+
+    <div class="sb-section">Módulos</div>
+    <div class="sb-item" onclick="showToast('Módulo de Prospecção — em breve!')">
+      <i class="ti ti-telescope"></i> Prospecção
+    </div>
+    <div class="sb-item" onclick="showToast('Módulo de Roteirização GMPRO — em breve!')">
+      <i class="ti ti-route"></i> Roteirização
+    </div>
+    <div class="sb-item" onclick="showToast('Módulo Solar API — em breve!')">
+      <i class="ti ti-solar-panel"></i> Solar API
+    </div>
+  </nav>
+
+  <div class="sb-footer">
+    <div class="sb-kpi-row">
+      <div class="sb-kpi">
+        <div class="sb-kpi-label">Meta jun</div>
+        <div class="sb-kpi-val">78%</div>
+        <div class="sb-kpi-sub">R$312k / 400k</div>
+      </div>
+      <div class="sb-kpi">
+        <div class="sb-kpi-label">Comissão</div>
+        <div class="sb-kpi-val">R$4,2k</div>
+        <div class="sb-kpi-sub">acumulada</div>
+      </div>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="tb-title" id="tb-title">Bom dia, Rafael — terça-feira, 09 de junho</div>
+    <span class="tb-date" id="tb-date">09:14 · SP · Vila Madalena</span>
+    <button class="tb-btn tb-btn-outline" onclick="showView('chat')">
+      <i class="ti ti-message-circle" style="font-size:14px"></i> Perguntar à IA
+    </button>
+    <button class="tb-btn" onclick="showView('agenda')">
+      <i class="ti ti-calendar" style="font-size:14px"></i> Ver agenda
+    </button>
+  </div>
+
+  <div class="content">
+
+    <!-- ── DASHBOARD ── -->
+    <div class="view active" id="view-dash">
+      <div class="dash-grid">
+        <div class="kpi-card">
+          <div class="kc-label">Missões hoje</div>
+          <div class="kc-val">3</div>
+          <div class="kc-sub up"><i class="ti ti-trending-up" style="font-size:12px"></i> 82% prob. média</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kc-label">Comissão potencial</div>
+          <div class="kc-val">R$1.840</div>
+          <div class="kc-sub neu">se fechar tudo hoje</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kc-label">Clientes ativos</div>
+          <div class="kc-val">24</div>
+          <div class="kc-sub up"><i class="ti ti-arrow-up" style="font-size:12px"></i> 2 novos esse mês</div>
+        </div>
+        <div class="kpi-card">
+          <div class="kc-label">Em risco de churn</div>
+          <div class="kc-val">2</div>
+          <div class="kc-sub dn"><i class="ti ti-alert-triangle" style="font-size:12px"></i> ação necessária</div>
+        </div>
+      </div>
+
+      <div class="dash-body">
+        <div class="dash-left">
+          <!-- MISSÕES -->
+          <div class="card">
+            <div class="card-hd">Missões do dia <span class="tag tag-gold">3 pendentes</span></div>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <div class="pipe-deal" onclick="openDossie('adega')">
+                <div style="display:flex;align-items:center;gap:10px;margin-bottom:6px">
+                  <div style="width:32px;height:32px;border-radius:8px;background:#E1F5EE;color:#085041;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0"><i class="ti ti-building-store"></i></div>
+                  <div style="flex:1">
+                    <div style="display:flex;align-items:center;justify-content:space-between">
+                      <span class="pd-name">Adega São Bento</span>
+                      <span class="tag tag-teal" style="font-size:10px">Up-sell</span>
+                    </div>
+                    <div class="pd-meta"><span class="farol f-g"></span> 91% de sucesso · Vila Madalena · Visita presencial</div>
+                  </div>
+                </div>
+                <div style="background:#E1F5EE;border-radius:6px;padding:8px 10px">
+                  <div style="font-size:11px;color:#085041;line-height:1.5"><strong>SKU alvo:</strong> Kit Vinhos Argentinos Premium — DNA 94%, pot. R$890</div>
+                </div>
+              </div>
+              <div class="pipe-deal" onclick="showView('chat')">
+                <div style="display:flex;align-items:center;gap:10px">
+                  <div style="width:32px;height:32px;border-radius:8px;background:#FAEEDA;color:#633806;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0"><i class="ti ti-phone"></i></div>
+                  <div style="flex:1">
+                    <div style="display:flex;align-items:center;justify-content:space-between">
+                      <span class="pd-name">Bar do Zé — Pinheiros</span>
+                      <span class="tag tag-gold">Reativação</span>
+                    </div>
+                    <div class="pd-meta"><span class="farol f-a"></span> 74% de sucesso · Ligação</div>
+                  </div>
+                </div>
+              </div>
+              <div class="pipe-deal" onclick="showView('agenda')">
+                <div style="display:flex;align-items:center;gap:10px">
+                  <div style="width:32px;height:32px;border-radius:8px;background:#E6F1FB;color:#0C447C;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0"><i class="ti ti-mail"></i></div>
+                  <div style="flex:1">
+                    <div style="display:flex;align-items:center;justify-content:space-between">
+                      <span class="pd-name">Empório Jardins</span>
+                      <span class="tag tag-blue">Expansão</span>
+                    </div>
+                    <div class="pd-meta"><span class="farol f-a"></span> 68% de sucesso · E-mail + visita</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- MINI PIPELINE -->
+          <div class="card">
+            <div class="card-hd">Pipeline resumido <button class="tb-btn tb-btn-outline" style="font-size:11px;padding:4px 10px" onclick="showView('pipe')">Ver completo →</button></div>
+            <div class="pipe-cols">
+              <div>
+                <div class="pipe-col-hd">Qualificando <span class="pipe-count">3</span></div>
+                <div class="pipe-deal"><div class="pd-name">Empório Moema</div><div class="pd-val">R$1.200</div><div class="prob-bar"><div class="prob-fill" style="width:45%"></div></div></div>
+                <div class="pipe-deal"><div class="pd-name">Bar Conceito SP</div><div class="pd-val">R$2.100</div><div class="prob-bar"><div class="prob-fill" style="width:38%"></div></div></div>
+              </div>
+              <div>
+                <div class="pipe-col-hd">Proposta enviada <span class="pipe-count">2</span></div>
+                <div class="pipe-deal"><div class="pd-name">Empório Jardins</div><div class="pd-val">R$6.200</div><div class="prob-bar"><div class="prob-fill" style="width:68%;background:var(--warn)"></div></div></div>
+                <div class="pipe-deal"><div class="pd-name">Deli Vilaboim</div><div class="pd-val">R$3.400</div><div class="prob-bar"><div class="prob-fill" style="width:72%"></div></div></div>
+              </div>
+              <div>
+                <div class="pipe-col-hd">Negociando <span class="pipe-count">2</span></div>
+                <div class="pipe-deal"><div class="pd-name">Adega São Bento</div><div class="pd-val">R$890</div><div class="prob-bar"><div class="prob-fill" style="width:91%"></div></div></div>
+                <div class="pipe-deal"><div class="pd-name">Wine Bar Paulista</div><div class="pd-val">R$5.400</div><div class="prob-bar"><div class="prob-fill" style="width:88%"></div></div></div>
+              </div>
+              <div>
+                <div class="pipe-col-hd">Fechado <span class="pipe-count" style="background:#E1F5EE;color:#085041">4</span></div>
+                <div class="pipe-deal" style="border-left:2px solid var(--sig)"><div class="pd-name">Cervejaria ABC</div><div class="pd-val" style="color:var(--sig)">R$4.200 ✓</div></div>
+                <div class="pipe-deal" style="border-left:2px solid var(--sig)"><div class="pd-name">Bar Fradique</div><div class="pd-val" style="color:var(--sig)">R$1.800 ✓</div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- RIGHT: IA INSIGHTS + CHURN -->
+        <div style="display:flex;flex-direction:column;gap:12px">
+          <div style="background:var(--mid);border-radius:var(--r);padding:14px 16px">
+            <div style="font-size:10px;color:var(--gold);letter-spacing:0.6px;text-transform:uppercase;font-weight:600;margin-bottom:8px;display:flex;align-items:center;gap:6px"><i class="ti ti-brain" style="font-size:13px"></i>IA — insight do dia</div>
+            <div style="font-size:13px;color:rgba(255,255,255,0.85);line-height:1.6;margin-bottom:10px">Adega São Bento tem DNA de 94% com os seus melhores clientes. Se fechar hoje, a comissão cobre <strong style="color:var(--gold)">48% da meta da semana</strong>.</div>
+            <div style="display:flex;gap:6px;flex-wrap:wrap">
+              <div class="insight-pill"><i class="ti ti-clock" style="font-size:11px"></i> Melhor horário: 10h–11h</div>
+              <div class="insight-pill"><i class="ti ti-wine" style="font-size:11px"></i> SKU alvo: vinhos premium</div>
+              <div class="insight-pill"><i class="ti ti-trending-up" style="font-size:11px"></i> Giro: 11 dias</div>
+            </div>
+            <button class="tb-btn" style="width:100%;margin-top:10px;justify-content:center" onclick="showView('chat')">
+              <i class="ti ti-message-circle" style="font-size:13px"></i> Perguntar à IA
+            </button>
+          </div>
+
+          <div class="card">
+            <div class="card-hd">Alertas de churn <span class="tag tag-red">2 urgentes</span></div>
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <div style="background:#FCEBEB;border-radius:var(--r-sm);padding:10px 12px;cursor:pointer" onclick="showToast('Abrindo dossiê de Distribuidora Pinheiro...')">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px">
+                  <span style="font-size:12px;font-weight:600;color:#791F1F">Distribuidora Pinheiro</span>
+                  <span style="font-size:10px;color:#791F1F">47 dias sem pedido</span>
+                </div>
+                <div style="font-size:11px;color:#A32D2D">Volume caiu 61% — padrão de saída detectado</div>
+              </div>
+              <div style="background:#FAEEDA;border-radius:var(--r-sm);padding:10px 12px;cursor:pointer" onclick="showToast('Abrindo dossiê de Empório Moema...')">
+                <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:3px">
+                  <span style="font-size:12px;font-weight:600;color:#633806">Empório Moema</span>
+                  <span style="font-size:10px;color:#633806">ticket -34%</span>
+                </div>
+                <div style="font-size:11px;color:#854F0B">Possível teste de concorrente</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-hd">Próxima visita agendada</div>
+            <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:0.5px solid var(--bd);cursor:pointer" onclick="showView('agenda')">
+              <div style="width:40px;text-align:center;flex-shrink:0">
+                <div style="font-size:10px;color:var(--ink3)">HOJE</div>
+                <div style="font-size:20px;font-weight:900;color:var(--ink);line-height:1">09</div>
+              </div>
+              <div style="flex:1">
+                <div style="font-size:13px;font-weight:600;color:var(--ink)">Adega São Bento</div>
+                <div style="font-size:11px;color:var(--ink3)">10:30 · R. Aspicuelta, 240 · Vila Madalena</div>
+              </div>
+              <i class="ti ti-chevron-right" style="color:var(--ink3)"></i>
+            </div>
+            <button class="tb-btn" style="width:100%;margin-top:10px;justify-content:center;background:var(--sig)" onclick="showView('agenda')">
+              <i class="ti ti-map-2" style="font-size:13px"></i> Ver rota otimizada
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── IA CHAT ── -->
+    <div class="view" id="view-chat">
+      <div class="chat-layout">
+        <div class="chat-main">
+          <div class="chat-header">
+            <div class="chat-ai-av">
+              <svg width="20" height="20" viewBox="0 0 64 64" fill="none">
+                <circle cx="32" cy="32" r="7" fill="#E5B84A"/>
+                <circle cx="32" cy="11" r="2.5" fill="#E5B84A" opacity="0.9"/>
+                <circle cx="11" cy="32" r="2.5" fill="#E5B84A" opacity="0.7"/>
+                <circle cx="53" cy="32" r="2.5" fill="#E5B84A" opacity="0.4"/>
+                <circle cx="17" cy="17" r="2" fill="#E5B84A" opacity="0.6"/>
+                <line x1="32" y1="25" x2="32" y2="13.5" stroke="#E5B84A" stroke-width="1" stroke-opacity="0.5"/>
+                <line x1="25" y1="32" x2="13.5" y2="32" stroke="#E5B84A" stroke-width="1" stroke-opacity="0.4"/>
+              </svg>
+            </div>
+            <div>
+              <div style="font-size:14px;font-weight:600;color:var(--ink)">SalesLumi IA — Consultora</div>
+              <div style="font-size:11px;color:var(--sig);display:flex;align-items:center;gap:4px"><span style="width:6px;height:6px;border-radius:50%;background:var(--sig);display:inline-block"></span> Online · pronta para ajudar</div>
+            </div>
+          </div>
+
+          <div class="chat-messages" id="chat-messages">
+            <div class="msg-ai">
+              <div class="ai-tag"><i class="ti ti-brain" style="font-size:11px"></i> SalesLumi IA</div>
+              <div class="msg-bubble-ai">Bom dia, Rafael! Analisei sua carteira esta manhã e tenho 3 insights importantes para você hoje.<br><br>
+              <strong>Adega São Bento</strong> tem 91% de probabilidade de fechar o Kit Argentinos — é a sua prioridade número 1. O cliente tem padrão de compra às terças-fãs de manhã. Ideal visitar entre 10h e 11h.<br><br>
+              Quer que eu prepare o roteiro completo da visita?</div>
+              <div class="msg-time-left">09:08</div>
+            </div>
+            <div class="msg-user">
+              <div class="msg-bubble-user">Sim, e me fala o que fazer se ele disser que o estoque de cerveja está cheio</div>
+              <div class="msg-time">09:09</div>
+            </div>
+            <div class="msg-ai">
+              <div class="msg-bubble-ai">Perfeito. Quando ele disser isso, use o argumento da <strong>diversificação de margem</strong>:<br><br>
+              <em>"Sr. Marcos, entendo. Por isso estou sugerindo vinho, não mais cerveja — a margem é 40% maior, o giro é de 11 dias e o novo público da Vila Madalena está pedindo rótulos que seus vizinhos ainda não têm."</em><br><br>
+              Se ele ainda hesitar, ofereça o kit com <strong>prazo de pagamento em 30 dias</strong> — o histórico dele mostra que esse gatilho fecha 78% das objeções de estoque.</div>
+              <div class="msg-time-left">09:09</div>
+            </div>
+          </div>
+
+          <div class="chat-input-area">
+            <div class="chat-suggestions">
+              <div class="chat-sug" onclick="sendMsg('Qual o melhor horário para ligar para o Bar do Zé?')">Melhor horário Bar do Zé</div>
+              <div class="chat-sug" onclick="sendMsg('Quais clientes estão em risco de churn?')">Clientes em risco</div>
+              <div class="chat-sug" onclick="sendMsg('Prepare um e-mail de reativação para o Empório Moema')">E-mail de reativação</div>
+              <div class="chat-sug" onclick="sendMsg('Qual o meu forecast para fechar a meta de junho?')">Forecast junho</div>
+            </div>
+            <div class="chat-input-row">
+              <input class="chat-input" id="chat-input" type="text" placeholder="Pergunte sobre um cliente, negociação ou estratégia...">
+              <button class="chat-send" onclick="sendChat()"><i class="ti ti-send"></i></button>
+            </div>
+          </div>
+        </div>
+
+        <div class="chat-right">
+          <div class="context-section">
+            <div class="ctx-title">Contexto ativo</div>
+            <div class="ctx-item" onclick="sendMsg('Me prepara para a visita da Adega São Bento')">
+              <div class="ctx-item-name">Adega São Bento</div>
+              <div class="ctx-item-meta">Visita hoje · 10:30 · DNA 94%</div>
+            </div>
+            <div class="ctx-item" onclick="sendMsg('Como abordar o Bar do Zé para reativação?')">
+              <div class="ctx-item-name">Bar do Zé — Pinheiros</div>
+              <div class="ctx-item-meta">Reativação · Ligação pendente</div>
+            </div>
+          </div>
+          <div class="context-section">
+            <div class="ctx-title">Atalhos inteligentes</div>
+            <div class="ctx-item" onclick="sendMsg('Gere um script de abertura para a visita de hoje')">
+              <div class="ctx-item-name"><i class="ti ti-script" style="font-size:12px;margin-right:4px"></i> Gerar script de visita</div>
+            </div>
+            <div class="ctx-item" onclick="sendMsg('Escreva um e-mail de follow-up para o Empório Jardins')">
+              <div class="ctx-item-name"><i class="ti ti-mail" style="font-size:12px;margin-right:4px"></i> Redigir e-mail</div>
+            </div>
+            <div class="ctx-item" onclick="sendMsg('Analise meu pipeline e me diga o risco de não bater a meta')">
+              <div class="ctx-item-name"><i class="ti ti-chart-bar" style="font-size:12px;margin-right:4px"></i> Análise do pipeline</div>
+            </div>
+            <div class="ctx-item" onclick="sendMsg('Quais são os 3 clientes com maior chance de up-sell essa semana?')">
+              <div class="ctx-item-name"><i class="ti ti-trending-up" style="font-size:12px;margin-right:4px"></i> Oportunidades de up-sell</div>
+            </div>
+          </div>
+          <div class="context-section">
+            <div class="ctx-title">Últimas análises</div>
+            <div style="background:var(--bone);border-radius:var(--r-sm);padding:10px 12px">
+              <div style="font-size:11px;color:var(--ink3);margin-bottom:4px">09:08 hoje</div>
+              <div style="font-size:12px;color:var(--ink);line-height:1.5">DNA de sucesso de Adega São Bento atualizado: 94% de correlação com seus melhores clientes.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── MAPA ── -->
+    <div class="view" id="view-mapa">
+      <div class="map-layout">
+        <div class="map-area">
+          <!-- MAP BACKGROUND -->
+          <div class="map-bg">
+            <!-- Blocos de quarteirão -->
+            <div class="map-block" style="left:8%;top:8%;width:18%;height:22%"></div>
+            <div class="map-block" style="left:30%;top:8%;width:15%;height:22%"></div>
+            <div class="map-block" style="left:49%;top:8%;width:20%;height:22%"></div>
+            <div class="map-block" style="left:73%;top:8%;width:20%;height:22%"></div>
+            <div class="map-block" style="left:8%;top:36%;width:18%;height:18%"></div>
+            <div class="map-block" style="left:30%;top:36%;width:15%;height:18%"></div>
+            <div class="map-block" style="left:49%;top:36%;width:20%;height:18%"></div>
+            <div class="map-block" style="left:73%;top:36%;width:20%;height:18%"></div>
+            <div class="map-block" style="left:8%;top:62%;width:18%;height:28%"></div>
+            <div class="map-block" style="left:30%;top:62%;width:15%;height:28%"></div>
+            <div class="map-block" style="left:49%;top:62%;width:20%;height:28%"></div>
+            <div class="map-block" style="left:73%;top:62%;width:20%;height:28%"></div>
+            <!-- Ruas principais -->
+            <div class="map-road-h" style="top:32%"></div>
+            <div class="map-road-h" style="top:58%"></div>
+            <div class="map-road-v" style="left:27%"></div>
+            <div class="map-road-v" style="left:47%"></div>
+            <div class="map-road-v" style="left:71%"></div>
+            <!-- Ruas secundárias -->
+            <div class="map-road-sm-h" style="top:18%"></div>
+            <div class="map-road-sm-h" style="top:73%"></div>
+            <div class="map-road-sm-v" style="left:14%"></div>
+            <div class="map-road-sm-v" style="left:60%"></div>
+            <!-- Labels de rua -->
+            <div class="map-label-street" style="left:29%;top:29%;transform:rotate(0deg)">R. Aspicuelta</div>
+            <div class="map-label-street" style="left:48%;top:55%;transform:rotate(0deg)">R. Fradique Coutinho</div>
+            <div class="map-label-street" style="left:16%;top:30%">Av. Rebouças</div>
+          </div>
+
+          <!-- PINS -->
+          <div class="map-pin" style="top:25%;left:35%" onclick="selectClient('adega')">
+            <div class="pin-wrap">
+              <div class="pin-bubble pin-active">Adega S. Bento</div>
+              <div class="pin-dot" style="background:var(--sig)"></div>
+            </div>
+          </div>
+          <div class="map-pin" style="top:42%;left:56%" onclick="selectClient('emporioJ')">
+            <div class="pin-wrap">
+              <div class="pin-bubble pin-warn">Empório Jardins</div>
+              <div class="pin-dot" style="background:var(--warn)"></div>
+            </div>
+          </div>
+          <div class="map-pin" style="top:65%;left:30%" onclick="selectClient('bar')">
+            <div class="pin-wrap">
+              <div class="pin-bubble pin-warn">Bar do Zé</div>
+              <div class="pin-dot" style="background:var(--warn)"></div>
+            </div>
+          </div>
+          <div class="map-pin" style="top:20%;left:68%" onclick="selectClient('wine')">
+            <div class="pin-wrap">
+              <div class="pin-bubble pin-active">Wine Bar Paulista</div>
+              <div class="pin-dot" style="background:var(--sig)"></div>
+            </div>
+          </div>
+          <div class="map-pin" style="top:72%;left:65%" onclick="selectClient('pinheiro')">
+            <div class="pin-wrap">
+              <div class="pin-bubble pin-risk">Dist. Pinheiro ⚠</div>
+              <div class="pin-dot" style="background:var(--risk)"></div>
+            </div>
+          </div>
+          <div class="map-pin" style="top:50%;left:45%">
+            <div class="pin-wrap">
+              <div class="pin-bubble pin-you">Você</div>
+              <div class="pin-dot" style="background:var(--mid)"></div>
+            </div>
+          </div>
+          <div class="map-pin" style="top:38%;left:22%" onclick="selectClient('deli')">
+            <div class="pin-wrap">
+              <div class="pin-bubble pin-prospect">Deli Vila ★</div>
+              <div class="pin-dot" style="background:var(--gold)"></div>
+            </div>
+          </div>
+
+          <!-- CONTROLS -->
+          <div class="map-controls">
+            <button class="map-ctrl-btn on" id="btn-ativos" onclick="toggleFilter('ativos')"><span style="width:8px;height:8px;border-radius:50%;background:var(--sig);display:inline-block"></span> Ativos</button>
+            <button class="map-ctrl-btn on" id="btn-risco" onclick="toggleFilter('risco')"><span style="width:8px;height:8px;border-radius:50%;background:var(--risk);display:inline-block"></span> Em risco</button>
+            <button class="map-ctrl-btn on" id="btn-prospect" onclick="toggleFilter('prospect')"><span style="width:8px;height:8px;border-radius:50%;background:var(--gold);display:inline-block"></span> Leads</button>
+          </div>
+
+          <div class="map-legend">
+            <div class="ml-item"><div class="ml-dot" style="background:var(--sig)"></div> Cliente ativo</div>
+            <div class="ml-item"><div class="ml-dot" style="background:var(--warn)"></div> Atenção necessária</div>
+            <div class="ml-item"><div class="ml-dot" style="background:var(--risk)"></div> Risco de churn</div>
+            <div class="ml-item"><div class="ml-dot" style="background:var(--gold)"></div> Lead prospectado</div>
+          </div>
+        </div>
+
+        <!-- MAP SIDEBAR -->
+        <div class="map-sidebar">
+          <div style="font-size:13px;font-weight:600;color:var(--ink);margin-bottom:12px;display:flex;align-items:center;justify-content:space-between">
+            Carteira <span class="tag tag-teal">24 clientes</span>
+          </div>
+          <div class="client-list" id="client-list">
+            <div class="client-item selected" id="ci-adega" onclick="selectClient('adega')">
+              <div class="ci-head">
+                <div class="ci-init" style="background:#E1F5EE;color:#085041">AS</div>
+                <div>
+                  <div class="ci-name">Adega São Bento</div>
+                  <div class="ci-type">Adega · Vila Madalena</div>
+                </div>
+                <span class="farol f-g" style="margin-left:auto"></span>
+              </div>
+              <div class="ci-stats">
+                <div class="ci-stat"><div class="ci-stat-label">Ticket</div><div class="ci-stat-val">R$4.200</div></div>
+                <div class="ci-stat"><div class="ci-stat-label">DNA</div><div class="ci-stat-val" style="color:var(--sig)">94%</div></div>
+                <div class="ci-stat"><div class="ci-stat-label">Última compra</div><div class="ci-stat-val">22 mai</div></div>
+              </div>
+              <div class="health-bar"><div class="health-fill" style="width:88%;background:var(--sig)"></div></div>
+            </div>
+            <div class="client-item" id="ci-emporioJ" onclick="selectClient('emporioJ')">
+              <div class="ci-head">
+                <div class="ci-init" style="background:#E6F1FB;color:#0C447C">EJ</div>
+                <div>
+                  <div class="ci-name">Empório Jardins</div>
+                  <div class="ci-type">Delicatessen · Jardins</div>
+                </div>
+                <span class="farol f-a" style="margin-left:auto"></span>
+              </div>
+              <div class="ci-stats">
+                <div class="ci-stat"><div class="ci-stat-label">Ticket</div><div class="ci-stat-val">R$6.200</div></div>
+                <div class="ci-stat"><div class="ci-stat-label">DNA</div><div class="ci-stat-val" style="color:var(--sig)">81%</div></div>
+                <div class="ci-stat"><div class="ci-stat-label">Última compra</div><div class="ci-stat-val">15 mai</div></div>
+              </div>
+              <div class="health-bar"><div class="health-fill" style="width:68%;background:var(--warn)"></div></div>
+            </div>
+            <div class="client-item" id="ci-pinheiro" onclick="selectClient('pinheiro')">
+              <div class="ci-head">
+                <div class="ci-init" style="background:#FCEBEB;color:#791F1F">DP</div>
+                <div>
+                  <div class="ci-name">Dist. Pinheiro</div>
+                  <div class="ci-type">Distribuidora · Pinheiros</div>
+                </div>
+                <span class="farol f-r" style="margin-left:auto"></span>
+              </div>
+              <div class="ci-stats">
+                <div class="ci-stat"><div class="ci-stat-label">Ticket</div><div class="ci-stat-val" style="color:var(--risk)">R$1.100</div></div>
+                <div class="ci-stat"><div class="ci-stat-label">Churn</div><div class="ci-stat-val" style="color:var(--risk)">Alto</div></div>
+                <div class="ci-stat"><div class="ci-stat-label">Última compra</div><div class="ci-stat-val" style="color:var(--risk)">47 dias</div></div>
+              </div>
+              <div class="health-bar"><div class="health-fill" style="width:18%;background:var(--risk)"></div></div>
+            </div>
+            <div class="client-item" id="ci-bar" onclick="selectClient('bar')">
+              <div class="ci-head">
+                <div class="ci-init" style="background:#FAEEDA;color:#633806">BZ</div>
+                <div>
+                  <div class="ci-name">Bar do Zé</div>
+                  <div class="ci-type">Bar · Pinheiros</div>
+                </div>
+                <span class="farol f-a" style="margin-left:auto"></span>
+              </div>
+              <div class="ci-stats">
+                <div class="ci-stat"><div class="ci-stat-label">Ticket</div><div class="ci-stat-val">R$3.800</div></div>
+                <div class="ci-stat"><div class="ci-stat-label">Prob.</div><div class="ci-stat-val" style="color:var(--warn)">74%</div></div>
+                <div class="ci-stat"><div class="ci-stat-label">Última compra</div><div class="ci-stat-val">03 jun</div></div>
+              </div>
+              <div class="health-bar"><div class="health-fill" style="width:55%;background:var(--warn)"></div></div>
+            </div>
+            <div class="client-item" id="ci-wine" onclick="selectClient('wine')">
+              <div class="ci-head">
+                <div class="ci-init" style="background:#EEEDFE;color:#3C3489">WB</div>
+                <div>
+                  <div class="ci-name">Wine Bar Paulista</div>
+                  <div class="ci-type">Wine bar · Paulista</div>
+                </div>
+                <span class="farol f-g" style="margin-left:auto"></span>
+              </div>
+              <div class="ci-stats">
+                <div class="ci-stat"><div class="ci-stat-label">Ticket</div><div class="ci-stat-val">R$5.400</div></div>
+                <div class="ci-stat"><div class="ci-stat-label">Prob.</div><div class="ci-stat-val" style="color:var(--sig)">88%</div></div>
+                <div class="ci-stat"><div class="ci-stat-label">Última compra</div><div class="ci-stat-val">07 jun</div></div>
+              </div>
+              <div class="health-bar"><div class="health-fill" style="width:88%;background:var(--sig)"></div></div>
+            </div>
+            <div class="client-item" id="ci-deli" onclick="selectClient('deli')">
+              <div class="ci-head">
+                <div class="ci-init" style="background:#FAEEDA;color:#633806">DV</div>
+                <div>
+                  <div class="ci-name">Deli Vila</div>
+                  <div class="ci-type">Lead · 67% DNA · 490m</div>
+                </div>
+                <span style="background:var(--gold);color:var(--mid);font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;margin-left:auto">Lead</span>
+              </div>
+              <div class="health-bar"><div class="health-fill" style="width:67%;background:var(--gold)"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── AGENDA ── -->
+    <div class="view" id="view-agenda">
+      <div class="agenda-layout">
+        <div>
+          <!-- DIAS DA SEMANA -->
+          <div class="agenda-days">
+            <div class="ag-day"><div class="ag-day-name">Seg</div><div class="ag-day-num">09</div></div>
+            <div class="ag-day today"><div class="ag-day-name">Ter</div><div class="ag-day-num">10</div><div class="ag-dot"></div></div>
+            <div class="ag-day has-event"><div class="ag-day-name">Qua</div><div class="ag-day-num">11</div><div class="ag-dot"></div></div>
+            <div class="ag-day has-event"><div class="ag-day-name">Qui</div><div class="ag-day-num">12</div><div class="ag-dot"></div></div>
+            <div class="ag-day"><div class="ag-day-name">Sex</div><div class="ag-day-num">13</div></div>
+            <div class="ag-day"><div class="ag-day-name">Sáb</div><div class="ag-day-num">14</div></div>
+            <div class="ag-day"><div class="ag-day-name">Dom</div><div class="ag-day-num">15</div></div>
+          </div>
+
+          <!-- EVENTOS DE HOJE -->
+          <div style="font-size:12px;font-weight:600;color:var(--ink3);letter-spacing:0.5px;text-transform:uppercase;margin-bottom:10px">Hoje — terça, 10 de junho</div>
+          <div class="event-list">
+            <div class="event-card visit" onclick="openEventModal()">
+              <div style="display:flex;align-items:flex-start;gap:12px">
+                <div style="text-align:center;min-width:48px">
+                  <div class="ev-time">10:30</div>
+                  <div style="width:1px;height:40px;background:var(--sig);margin:4px auto;opacity:0.3"></div>
+                  <div class="ev-time">11:30</div>
+                </div>
+                <div style="flex:1">
+                  <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
+                    <div class="ev-name">Visita — Adega São Bento</div>
+                    <span class="ev-tag tag-teal">Up-sell</span>
+                  </div>
+                  <div class="ev-meta"><i class="ti ti-map-pin" style="font-size:12px"></i> R. Aspicuelta, 240 · Vila Madalena</div>
+                  <div style="background:#E1F5EE;border-radius:var(--r-sm);padding:7px 10px;margin-top:8px">
+                    <div style="font-size:11px;color:#085041"><strong>SKU alvo:</strong> Kit Vinhos Argentinos · Pot. R$890 · DNA 94%</div>
+                  </div>
+                </div>
+                <button class="tb-btn" style="font-size:11px;padding:5px 10px;flex-shrink:0" onclick="event.stopPropagation();showView('mapa')">
+                  <i class="ti ti-map-2" style="font-size:12px"></i> Ver rota
+                </button>
+              </div>
+            </div>
+
+            <div class="event-card call">
+              <div style="display:flex;align-items:flex-start;gap:12px">
+                <div style="text-align:center;min-width:48px">
+                  <div class="ev-time">14:00</div>
+                  <div style="width:1px;height:24px;background:#378ADD;margin:4px auto;opacity:0.3"></div>
+                  <div class="ev-time">14:30</div>
+                </div>
+                <div style="flex:1">
+                  <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
+                    <div class="ev-name">Ligação — Bar do Zé</div>
+                    <span class="ev-tag tag-blue">Reativação</span>
+                  </div>
+                  <div class="ev-meta"><i class="ti ti-phone" style="font-size:12px"></i> (11) 3456-7890 · Falar com Sr. José</div>
+                  <div style="background:#E6F1FB;border-radius:var(--r-sm);padding:7px 10px;margin-top:8px">
+                    <div style="font-size:11px;color:#0C447C"><strong>Contexto:</strong> Sem pedido há 18 dias — abordar com oferta de kit de entrada</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="event-card prospect" style="border-left-color:var(--gold)">
+              <div style="display:flex;align-items:flex-start;gap:12px">
+                <div style="text-align:center;min-width:48px">
+                  <div class="ev-time">16:00</div>
+                  <div style="width:1px;height:24px;background:var(--gold);margin:4px auto;opacity:0.3"></div>
+                  <div class="ev-time">17:00</div>
+                </div>
+                <div style="flex:1">
+                  <div style="display:flex;align-items:center;gap:8px;margin-bottom:3px">
+                    <div class="ev-name">Prospecção — Empório Paulistano</div>
+                    <span class="ev-tag tag-gold">Novo lead</span>
+                  </div>
+                  <div class="ev-meta"><i class="ti ti-map-pin" style="font-size:12px"></i> R. Mourato Coelho, 180 · 180m da Adega S.Bento</div>
+                  <div style="background:#FAEEDA;border-radius:var(--r-sm);padding:7px 10px;margin-top:8px">
+                    <div style="font-size:11px;color:#633806"><strong>IA sugeriu:</strong> Visitar no caminho de volta — DNA 94%, pot. R$3.200/mês</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- AMANHÃ -->
+          <div style="font-size:12px;font-weight:600;color:var(--ink3);letter-spacing:0.5px;text-transform:uppercase;margin:20px 0 10px">Amanhã — quarta, 11 de junho</div>
+          <div class="event-list">
+            <div class="event-card visit">
+              <div style="display:flex;align-items:center;gap:12px">
+                <div style="text-align:center;min-width:48px"><div class="ev-time">09:00</div></div>
+                <div style="flex:1">
+                  <div class="ev-name">Visita — Wine Bar Paulista</div>
+                  <div class="ev-meta"><i class="ti ti-map-pin" style="font-size:12px"></i> Av. Paulista, 900 · Proposta de fechamento</div>
+                </div>
+                <span class="tag tag-teal">88% sucesso</span>
+              </div>
+            </div>
+            <div class="event-card call">
+              <div style="display:flex;align-items:center;gap:12px">
+                <div style="text-align:center;min-width:48px"><div class="ev-time">15:00</div></div>
+                <div style="flex:1">
+                  <div class="ev-name">Follow-up — Empório Jardins</div>
+                  <div class="ev-meta"><i class="ti ti-phone" style="font-size:12px"></i> Verificar recebimento da proposta</div>
+                </div>
+                <span class="tag tag-blue">Follow-up</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- AGENDA RIGHT -->
+        <div class="ag-right">
+          <div class="route-card">
+            <div class="rc-title"><i class="ti ti-route"></i> Rota otimizada de hoje</div>
+            <div style="font-size:11px;color:rgba(255,255,255,0.35);margin-bottom:10px">IA calculou a melhor ordem e distância</div>
+            <div class="route-stop">
+              <div class="rs-num active">1</div>
+              <div style="flex:1">
+                <div class="rs-name">Adega São Bento</div>
+                <div class="rs-meta">10:30 · R. Aspicuelta · Vila Madalena</div>
+              </div>
+              <div class="rs-dist">2,1 km</div>
+            </div>
+            <div class="route-stop">
+              <div class="rs-num">2</div>
+              <div style="flex:1">
+                <div class="rs-name">Empório Paulistano</div>
+                <div class="rs-meta">~12:00 · No caminho · Lead sugerido</div>
+              </div>
+              <div class="rs-dist">+180m</div>
+            </div>
+            <div class="route-stop">
+              <div class="rs-num">3</div>
+              <div style="flex:1">
+                <div class="rs-name">Bar do Zé</div>
+                <div class="rs-meta">14:00 · Ligação ao retornar</div>
+              </div>
+              <div class="rs-dist">3,8 km</div>
+            </div>
+            <div style="margin-top:10px;padding-top:10px;border-top:0.5px solid rgba(255,255,255,0.07);display:flex;justify-content:space-between">
+              <span style="font-size:11px;color:rgba(255,255,255,0.35)">Total estimado</span>
+              <span style="font-size:12px;font-weight:600;color:var(--gold)">6,1 km · ~45 min</span>
+            </div>
+            <button class="tb-btn" style="width:100%;margin-top:10px;justify-content:center;background:var(--sig);border:none" onclick="showToast('Abrindo navegação no Google Maps...')">
+              <i class="ti ti-navigation" style="font-size:13px"></i> Iniciar navegação
+            </button>
+          </div>
+
+          <div class="card">
+            <div class="card-hd" style="margin-bottom:8px">Sugestões da IA <span class="tag tag-gold">3 oportunidades</span></div>
+            <div class="suggest-list">
+              <div class="suggest-item" onclick="showToast('Adicionando Deli Vila à agenda...')">
+                <div class="si-icon" style="background:#E1F5EE;color:#085041"><i class="ti ti-building-store" style="font-size:14px"></i></div>
+                <div>
+                  <div class="si-name">Deli Vila</div>
+                  <div class="si-meta">490m da Adega · DNA <span class="si-dna">67%</span></div>
+                </div>
+                <button style="background:var(--mid);color:#fff;border:none;border-radius:var(--r-sm);padding:4px 10px;font-size:11px;cursor:pointer;flex-shrink:0">+ Agenda</button>
+              </div>
+              <div class="suggest-item" onclick="showToast('Adicionando Bar Conceito à agenda...')">
+                <div class="si-icon" style="background:#E6F1FB;color:#0C447C"><i class="ti ti-glass" style="font-size:14px"></i></div>
+                <div>
+                  <div class="si-name">Bar Conceito Aspicuelta</div>
+                  <div class="si-meta">340m da Adega · DNA <span class="si-dna">81%</span></div>
+                </div>
+                <button style="background:var(--mid);color:#fff;border:none;border-radius:var(--r-sm);padding:4px 10px;font-size:11px;cursor:pointer;flex-shrink:0">+ Agenda</button>
+              </div>
+              <div class="suggest-item" onclick="showToast('Adicionando Empório Moema à agenda...')">
+                <div class="si-icon" style="background:#FAEEDA;color:#633806"><i class="ti ti-building-store" style="font-size:14px"></i></div>
+                <div>
+                  <div class="si-name">Empório Moema ⚠</div>
+                  <div class="si-meta">Risco de churn · ação urgente</div>
+                </div>
+                <button style="background:var(--risk);color:#fff;border:none;border-radius:var(--r-sm);padding:4px 10px;font-size:11px;cursor:pointer;flex-shrink:0">Urgente</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── PIPELINE ── -->
+    <div class="view" id="view-pipe">
+      <div style="padding:20px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+          <div>
+            <div style="font-size:18px;font-weight:700;color:var(--ink);letter-spacing:-0.5px">Pipeline de vendas</div>
+            <div style="font-size:13px;color:var(--ink3);margin-top:2px">13 negócios · R$38.400 em aberto</div>
+          </div>
+          <div style="display:flex;gap:8px">
+            <button class="tb-btn tb-btn-outline" onclick="showToast('Exportando relatório do pipeline...')"><i class="ti ti-download" style="font-size:13px"></i> Exportar</button>
+            <button class="tb-btn" onclick="showToast('Novo negócio adicionado!')"><i class="ti ti-plus" style="font-size:13px"></i> Novo negócio</button>
+          </div>
+        </div>
+
+        <div class="pipe-cols" style="grid-template-columns:repeat(5,1fr);align-items:start">
+          <div>
+            <div class="pipe-col-hd" style="padding:8px 12px;background:var(--bone);border-radius:var(--r-sm)">Prospecção <span class="pipe-count">3</span></div>
+            <div style="margin-top:8px;display:flex;flex-direction:column;gap:6px">
+              <div class="pipe-deal" onclick="showToast('Abrindo dossiê de Empório Paulistano...')">
+                <div class="pd-name">Empório Paulistano</div>
+                <div class="pd-val">R$3.200</div>
+                <div class="pd-meta"><span class="farol f-g"></span> DNA 94% · Lead novo</div>
+                <div class="prob-bar"><div class="prob-fill" style="width:30%"></div></div>
+              </div>
+              <div class="pipe-deal" onclick="showToast('Abrindo dossiê de Bar Conceito...')">
+                <div class="pd-name">Bar Conceito Aspicuelta</div>
+                <div class="pd-val">R$2.100</div>
+                <div class="pd-meta"><span class="farol f-g"></span> DNA 81% · Próximo da Adega</div>
+                <div class="prob-bar"><div class="prob-fill" style="width:28%"></div></div>
+              </div>
+              <div class="pipe-deal" onclick="showToast('Abrindo dossiê de Deli Vila...')">
+                <div class="pd-name">Deli Vila</div>
+                <div class="pd-val">R$900</div>
+                <div class="pd-meta"><span class="farol f-a"></span> DNA 67%</div>
+                <div class="prob-bar"><div class="prob-fill" style="width:22%;background:var(--warn)"></div></div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div class="pipe-col-hd" style="padding:8px 12px;background:var(--bone);border-radius:var(--r-sm)">Qualificando <span class="pipe-count">2</span></div>
+            <div style="margin-top:8px;display:flex;flex-direction:column;gap:6px">
+              <div class="pipe-deal" onclick="showToast('Abrindo dossiê de Empório Moema...')">
+                <div class="pd-name">Empório Moema</div>
+                <div class="pd-val">R$1.200</div>
+                <div class="pd-meta"><span class="farol f-a"></span> Atenção: risco churn</div>
+                <div class="prob-bar"><div class="prob-fill" style="width:45%;background:var(--warn)"></div></div>
+              </div>
+              <div class="pipe-deal">
+                <div class="pd-name">Cervejaria Mooca</div>
+                <div class="pd-val">R$2.800</div>
+                <div class="pd-meta"><span class="farol f-g"></span> DNA 76%</div>
+                <div class="prob-bar"><div class="prob-fill" style="width:40%"></div></div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div class="pipe-col-hd" style="padding:8px 12px;background:var(--bone);border-radius:var(--r-sm)">Proposta enviada <span class="pipe-count">3</span></div>
+            <div style="margin-top:8px;display:flex;flex-direction:column;gap:6px">
+              <div class="pipe-deal" onclick="openDossie('emporioJ')">
+                <div class="pd-name">Empório Jardins</div>
+                <div class="pd-val">R$6.200</div>
+                <div class="pd-meta"><span class="farol f-a"></span> Aguardando retorno · 3 dias</div>
+                <div class="prob-bar"><div class="prob-fill" style="width:68%;background:var(--warn)"></div></div>
+              </div>
+              <div class="pipe-deal">
+                <div class="pd-name">Deli Vilaboim</div>
+                <div class="pd-val">R$3.400</div>
+                <div class="pd-meta"><span class="farol f-g"></span> Aprovação interna</div>
+                <div class="prob-bar"><div class="prob-fill" style="width:72%"></div></div>
+              </div>
+              <div class="pipe-deal">
+                <div class="pd-name">Dist. Lapa</div>
+                <div class="pd-val">R$8.500</div>
+                <div class="pd-meta"><span class="farol f-a"></span> Negociando prazo</div>
+                <div class="prob-bar"><div class="prob-fill" style="width:58%;background:var(--warn)"></div></div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div class="pipe-col-hd" style="padding:8px 12px;background:var(--bone);border-radius:var(--r-sm)">Negociando <span class="pipe-count">3</span></div>
+            <div style="margin-top:8px;display:flex;flex-direction:column;gap:6px">
+              <div class="pipe-deal" onclick="openDossie('adega')">
+                <div class="pd-name">Adega São Bento</div>
+                <div class="pd-val">R$890</div>
+                <div class="pd-meta"><span class="farol f-g"></span> Visita hoje 10:30</div>
+                <div class="prob-bar"><div class="prob-fill" style="width:91%"></div></div>
+              </div>
+              <div class="pipe-deal">
+                <div class="pd-name">Wine Bar Paulista</div>
+                <div class="pd-val">R$5.400</div>
+                <div class="pd-meta"><span class="farol f-g"></span> Visita amanhã 09:00</div>
+                <div class="prob-bar"><div class="prob-fill" style="width:88%"></div></div>
+              </div>
+              <div class="pipe-deal">
+                <div class="pd-name">Bar do Zé</div>
+                <div class="pd-val">R$3.800</div>
+                <div class="pd-meta"><span class="farol f-a"></span> Ligação hoje 14:00</div>
+                <div class="prob-bar"><div class="prob-fill" style="width:74%;background:var(--warn)"></div></div>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <div class="pipe-col-hd" style="padding:8px 12px;background:#E1F5EE;border-radius:var(--r-sm);color:#085041">Fechado <span class="pipe-count" style="background:#1D9E75;color:#fff">4</span></div>
+            <div style="margin-top:8px;display:flex;flex-direction:column;gap:6px">
+              <div class="pipe-deal" style="border-left:2px solid var(--sig)">
+                <div class="pd-name">Cervejaria ABC</div>
+                <div class="pd-val" style="color:var(--sig)">R$4.200 ✓</div>
+                <div class="pd-meta">Fechado em 05 jun</div>
+              </div>
+              <div class="pipe-deal" style="border-left:2px solid var(--sig)">
+                <div class="pd-name">Bar Fradique</div>
+                <div class="pd-val" style="color:var(--sig)">R$1.800 ✓</div>
+                <div class="pd-meta">Fechado em 03 jun</div>
+              </div>
+              <div class="pipe-deal" style="border-left:2px solid var(--sig)">
+                <div class="pd-name">Adega Mooca</div>
+                <div class="pd-val" style="color:var(--sig)">R$3.100 ✓</div>
+                <div class="pd-meta">Fechado em 28 mai</div>
+              </div>
+              <div class="pipe-deal" style="border-left:2px solid var(--sig)">
+                <div class="pd-name">Empório Higienópolis</div>
+                <div class="pd-val" style="color:var(--sig)">R$2.400 ✓</div>
+                <div class="pd-meta">Fechado em 22 mai</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- IA INSIGHT -->
+        <div style="background:var(--mid);border-radius:var(--r);padding:14px 18px;margin-top:16px;display:flex;align-items:center;gap:16px">
+          <div style="flex:1">
+            <div style="font-size:10px;color:var(--gold);letter-spacing:0.6px;text-transform:uppercase;font-weight:600;margin-bottom:4px">Análise do pipeline — IA</div>
+            <div style="font-size:13px;color:rgba(255,255,255,0.85);line-height:1.5">Com o pipeline atual, a probabilidade de bater a meta de R$400k é <strong style="color:var(--gold)">64%</strong>. Para aumentar para 85%, priorize Empório Jardins (R$6.200) e Wine Bar Paulista (R$5.400) essa semana.</div>
+          </div>
+          <button class="tb-btn" onclick="showView('chat')" style="flex-shrink:0">
+            <i class="ti ti-message-circle" style="font-size:13px"></i> Perguntar à IA
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+</div>
+
+<!-- MODAL DOSSIÊ -->
+<div class="modal-overlay" id="modal-dossie" onclick="closeModal('modal-dossie')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="closeModal('modal-dossie')"><i class="ti ti-x"></i></button>
+    <div class="modal-hd" id="modal-title">Adega São Bento — Dossiê 360°</div>
+    <div class="modal-sub" id="modal-sub">Vila Madalena · Up-sell · Visita hoje 10:30</div>
+    <div id="modal-body"></div>
+  </div>
+</div>
+
+<!-- MODAL EVENTO -->
+<div class="modal-overlay" id="modal-event" onclick="closeModal('modal-event')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="closeModal('modal-event')"><i class="ti ti-x"></i></button>
+    <div class="modal-hd">Visita — Adega São Bento</div>
+    <div class="modal-sub">Hoje, 10:30 – 11:30 · R. Aspicuelta, 240</div>
+    <div style="display:flex;flex-direction:column;gap:10px;margin-top:4px">
+      <div style="background:#E1F5EE;border-radius:var(--r-sm);padding:12px 14px">
+        <div style="font-size:11px;font-weight:600;color:#085041;margin-bottom:4px">SKU alvo</div>
+        <div style="font-size:14px;font-weight:700;color:#0F6E56">Kit Vinhos Argentinos Premium — R$890</div>
+        <div style="font-size:12px;color:#085041;margin-top:4px">DNA 94% · Giro médio 11 dias · Margem +40%</div>
+      </div>
+      <div style="background:var(--bone);border-radius:var(--r-sm);padding:12px 14px">
+        <div style="font-size:11px;font-weight:600;color:var(--ink2);margin-bottom:4px">Quebra-gelo sugerido pela IA</div>
+        <div style="font-size:13px;color:var(--ink);line-height:1.55;font-style:italic">"Sr. Marcos, percebi que a Vila Madalena está em transformação. Com o novo público de alto poder aquisitivo, fiz um estudo específico para a Adega que quero te mostrar."</div>
+      </div>
+      <div style="background:#FAEEDA;border-radius:var(--r-sm);padding:12px 14px">
+        <div style="font-size:11px;font-weight:600;color:#633806;margin-bottom:4px">Objeção esperada</div>
+        <div style="font-size:12px;color:#633806;line-height:1.5">"Estoque de cerveja está cheio" → "Vinho tem margem 40% maior e o novo público da região pede rótulos que seus vizinhos ainda não têm."</div>
+      </div>
+      <div style="display:flex;gap:8px">
+        <button class="tb-btn" style="flex:1;justify-content:center" onclick="showToast('Abrindo navegação...'); closeModal('modal-event')">
+          <i class="ti ti-navigation" style="font-size:13px"></i> Navegar até lá
+        </button>
+        <button class="tb-btn tb-btn-outline" style="flex:1;justify-content:center" onclick="closeModal('modal-event');showView('chat')">
+          <i class="ti ti-message-circle" style="font-size:13px"></i> Perguntar à IA
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <i class="ti ti-check" style="font-size:16px;color:var(--gold)"></i>
+  <span id="toast-msg">Ação realizada!</span>
+</div>
+
+<script>
+function showView(id) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.getElementById('view-' + id).classList.add('active');
+  document.querySelectorAll('.sb-item').forEach(i => i.classList.remove('active'));
+  const titles = { dash: 'Bom dia, Rafael — terça-feira, 10 de junho', chat: 'IA Consultora — SalesLumi', mapa: 'Mapa da carteira', agenda: 'Agenda inteligente', pipe: 'Pipeline de vendas' };
+  document.getElementById('tb-title').textContent = titles[id] || '';
+  const map = { dash: 0, chat: 1, mapa: 3, agenda: 4, pipe: 5 };
+  const items = document.querySelectorAll('.sb-item');
+  if (map[id] !== undefined && items[map[id]]) items[map[id]].classList.add('active');
+}
+
+function selectClient(id) {
+  document.querySelectorAll('.client-item').forEach(c => c.classList.remove('selected'));
+  const el = document.getElementById('ci-' + id);
+  if (el) el.classList.add('selected');
+  showToast('Dossiê de ' + el.querySelector('.ci-name').textContent + ' carregado');
+}
+
+function toggleFilter(type) {
+  const btn = document.getElementById('btn-' + type);
+  btn.classList.toggle('on');
+}
+
+const dossies = {
+  adega: {
+    title: 'Adega São Bento — Dossiê 360°',
+    sub: 'Vila Madalena · Up-sell · Visita hoje 10:30',
+    body: `<div style="display:flex;flex-direction:column;gap:10px;margin-top:4px">
+      <div style="background:#F5F4F0;border-radius:8px;padding:12px 14px">
+        <div style="font-size:11px;font-weight:600;color:#444;margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px">Fundação</div>
+        <div style="font-size:13px;color:#1C1C1A;line-height:1.6">Ativo há 18 meses. Ticket médio <strong>R$4.200/mês</strong>. Compra artesanais (60%) e vinhos entrada (40%). Último pedido: R$3.900 em 22/mai.</div>
+      </div>
+      <div style="background:#E6F1FB;border-radius:8px;padding:12px 14px">
+        <div style="font-size:11px;font-weight:600;color:#0C447C;margin-bottom:4px;text-transform:uppercase;letter-spacing:0.5px">Contexto</div>
+        <div style="font-size:13px;color:#0C447C;line-height:1.55;font-style:italic">"Sr. Marcos, a Vila Madalena está em transformação. Com o novo público de alto poder aquisitivo, fiz um estudo específico para a Adega."</div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
+        <div style="background:#E1F5EE;border-radius:8px;padding:10px 12px"><div style="font-size:10px;color:#0F6E56;font-weight:600;margin-bottom:2px">FORÇA</div><div style="font-size:12px;color:#085041">Localização premium, base fiel consolidada</div></div>
+        <div style="background:#FAEEDA;border-radius:8px;padding:10px 12px"><div style="font-size:10px;color:#854F0B;font-weight:600;margin-bottom:2px">FRAQUEZA</div><div style="font-size:12px;color:#633806">Mix de vinhos desatualizado vs. vizinhança</div></div>
+        <div style="background:#E6F1FB;border-radius:8px;padding:10px 12px"><div style="font-size:10px;color:#185FA5;font-weight:600;margin-bottom:2px">OPORTUNIDADE</div><div style="font-size:12px;color:#0C447C">Novo público fine dining na vizinhança</div></div>
+        <div style="background:#FCEBEB;border-radius:8px;padding:10px 12px"><div style="font-size:10px;color:#A32D2D;font-weight:600;margin-bottom:2px">AMEAÇA</div><div style="font-size:12px;color:#791F1F">Concorrente a 600m ampliou importados em abr</div></div>
+      </div>
+      <div style="background:#0A1628;border-radius:8px;padding:12px 14px">
+        <div style="font-size:10px;color:#E5B84A;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:5px">SKU alvo · diretriz de fechamento</div>
+        <div style="font-size:16px;font-weight:700;color:#fff;margin-bottom:4px">Kit Vinhos Argentinos Premium — R$890</div>
+        <div style="font-size:12px;color:rgba(255,255,255,0.6);line-height:1.5">DNA 94% — 3 clientes gêmeos iniciaram com este kit. Giro médio: 11 dias. Margem 40% superior.</div>
+        <div style="background:rgba(229,184,74,0.1);border-radius:6px;padding:8px 10px;margin-top:8px">
+          <div style="font-size:12px;color:#E5B84A;line-height:1.45"><strong>Objeção esperada:</strong> "Estoque cheio" → "Exato, diversifique. Vinho tem margem 40% maior e o novo público pede rótulos que seus vizinhos ainda não têm."</div>
+        </div>
+      </div>
+    </div>`
+  }
+};
+
+function openDossie(id) {
+  const d = dossies[id] || dossies.adega;
+  document.getElementById('modal-title').textContent = d.title;
+  document.getElementById('modal-sub').textContent = d.sub;
+  document.getElementById('modal-body').innerHTML = d.body;
+  document.getElementById('modal-dossie').classList.add('open');
+}
+
+function openEventModal() {
+  document.getElementById('modal-event').classList.add('open');
+}
+
+function closeModal(id) {
+  document.getElementById(id).classList.remove('open');
+}
+
+let toastTimer;
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  document.getElementById('toast-msg').textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 2800);
+}
+
+const aiResponses = [
+  'Analisando os dados da sua carteira... O padrão de compra desta conta indica que a melhor abordagem é pelo **ângulo de margem**, não volume. Quer que eu gere o script completo?',
+  'Com base no histórico dos últimos 6 meses, os clientes com perfil similar respondem melhor a propostas enviadas às **terças entre 9h e 11h**. Quer que eu agende um lembrete?',
+  'Forecast atualizado: com Adega São Bento + Wine Bar Paulista fechando essa semana, você atinge **94% da meta**. O risco principal é o Empório Jardins que está há 3 dias sem resposta.',
+  'Redigindo o e-mail de reativação para o Empório Moema... Baseado no histórico, vou usar o argumento da **nova linha de verão** que tem 68% de taxa de abertura com esse perfil de cliente.',
+  'Detecção de padrão: Bar do Zé costuma fazer pedidos nas **primeiras semanas do mês**. Como já estamos na segunda semana sem retorno, recomendo ligar hoje — probabilidade de conversão é 74%.'
+];
+let aiIdx = 0;
+
+function sendMsg(msg) {
+  document.getElementById('chat-input').value = msg;
+  sendChat();
+}
+
+function sendChat() {
+  const input = document.getElementById('chat-input');
+  const msg = input.value.trim();
+  if (!msg) return;
+  const msgs = document.getElementById('chat-messages');
+
+  const userDiv = document.createElement('div');
+  userDiv.className = 'msg-user';
+  userDiv.innerHTML = `<div class="msg-bubble-user">${msg}</div><div class="msg-time">${new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}</div>`;
+  msgs.appendChild(userDiv);
+
+  const typing = document.createElement('div');
+  typing.className = 'typing-indicator';
+  typing.innerHTML = '<div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div>';
+  msgs.appendChild(typing);
+  msgs.scrollTop = msgs.scrollHeight;
+  input.value = '';
+
+  setTimeout(() => {
+    msgs.removeChild(typing);
+    const aiDiv = document.createElement('div');
+    aiDiv.className = 'msg-ai';
+    const response = aiResponses[aiIdx % aiResponses.length];
+    aiIdx++;
+    aiDiv.innerHTML = `<div class="ai-tag"><i class="ti ti-brain" style="font-size:11px"></i> SalesLumi IA</div><div class="msg-bubble-ai">${response}</div><div class="msg-time-left">${new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'})}</div>`;
+    msgs.appendChild(aiDiv);
+    msgs.scrollTop = msgs.scrollHeight;
+  }, 1400);
+
+  showView('chat');
+}
+
+document.getElementById('chat-input').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter') sendChat();
+});
+</script>
+</body>
+</html>
