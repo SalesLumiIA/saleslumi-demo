@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SalesLumi IA — Prospecção por Proximidade</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<style>
+:root {
+  --mid:#0A1628; --gold:#E5B84A; --gold-d:#B8922A;
+  --sig:#1D9E75; --risk:#E24B4A; --warn:#EF9F27;
+  --bone:#F5F4F0; --ink:#1C1C1A; --ink2:#444441; --ink3:#888780;
+  --bd:rgba(0,0,0,0.08); --r:10px; --r-sm:6px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;font-family:'Inter',sans-serif;background:var(--bone);color:var(--ink);overflow:hidden}
+
+.demo-nav{background:#0A1628;padding:8px 20px;display:flex;align-items:center;gap:8px;border-bottom:0.5px solid rgba(255,255,255,0.08);flex-shrink:0}
+.demo-nav-label{font-size:10px;color:rgba(255,255,255,0.3);letter-spacing:0.6px;text-transform:uppercase;margin-right:4px}
+.demo-nav a{font-size:12px;font-weight:500;color:rgba(255,255,255,0.5);text-decoration:none;padding:5px 12px;border-radius:20px;border:0.5px solid rgba(255,255,255,0.1);transition:all 0.15s;display:flex;align-items:center;gap:5px}
+.demo-nav a:hover{color:#fff;border-color:rgba(255,255,255,0.25);background:rgba(255,255,255,0.05)}
+.demo-nav a.current{color:var(--gold);border-color:var(--gold);background:rgba(229,184,74,0.1)}
+.demo-nav-logo{display:flex;align-items:center;gap:7px;margin-right:auto}
+.demo-nav-wm{font-size:14px;font-weight:900;color:#fff;letter-spacing:-0.4px}
+.demo-nav-wm span{color:var(--gold)}
+
+.page{display:flex;flex-direction:column;height:100vh}
+.topbar{background:var(--mid);padding:14px 20px;display:flex;align-items:center;gap:10px;flex-shrink:0}
+.topbar-title{font-size:14px;font-weight:700;color:#fff}
+.topbar-sub{font-size:11px;color:rgba(255,255,255,0.4);margin-top:1px}
+.topbar-badge{margin-left:auto;background:rgba(229,184,74,0.15);color:var(--gold);font-size:11px;padding:4px 12px;border-radius:20px;font-weight:600;display:flex;align-items:center;gap:4px}
+
+.layout{display:grid;grid-template-columns:1fr 320px;flex:1;min-height:0}
+
+.map{position:relative;background:#e8e8e2;overflow:hidden}
+.road-h{position:absolute;left:0;right:0;background:rgba(255,255,255,0.6);height:1.5px}
+.road-v{position:absolute;top:0;bottom:0;background:rgba(255,255,255,0.6);width:1.5px}
+.road-sm-h{position:absolute;left:0;right:0;background:rgba(255,255,255,0.35);height:0.8px}
+.road-sm-v{position:absolute;top:0;bottom:0;background:rgba(255,255,255,0.35);width:0.8px}
+.block{position:absolute;background:rgba(0,0,0,0.04);border-radius:2px}
+.street-label{position:absolute;font-size:10px;color:rgba(0,0,0,0.3)}
+.pin{position:absolute;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;cursor:pointer;transition:transform 0.15s;z-index:10}
+.pin:hover{transform:translate(-50%,-50%) scale(1.1)}
+.pin.you{cursor:default}
+.pin-bubble{padding:4px 10px;border-radius:20px;font-size:11px;font-weight:700;white-space:nowrap;border:2px solid #fff}
+.pin-dot{width:7px;height:7px;border-radius:50%;margin-top:2px}
+.pin-gold{background:var(--gold);color:var(--mid)}
+.pin-sig{background:var(--sig);color:#fff}
+.pin-blue{background:#378ADD;color:#fff}
+.pin-mid{background:var(--mid);color:var(--gold)}
+
+.legend{position:absolute;bottom:14px;left:14px;display:flex;flex-direction:column;gap:4px}
+.leg-item{background:rgba(255,255,255,0.92);border-radius:var(--r-sm);padding:5px 9px;display:flex;align-items:center;gap:5px;font-size:10px;color:var(--ink)}
+.leg-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+
+.sidebar{background:#fff;border-left:0.5px solid var(--bd);overflow-y:auto;padding:14px}
+.sb-label{font-size:10px;font-weight:700;letter-spacing:0.6px;text-transform:uppercase;color:var(--ink3);margin-bottom:10px}
+.lead-card{background:#fff;border:0.5px solid var(--bd);border-radius:var(--r);padding:11px 13px;margin-bottom:7px;cursor:pointer;transition:all 0.18s}
+.lead-card:hover{border-color:var(--gold)}
+.lead-card.sel{border-color:var(--gold);border-width:1.5px;box-shadow:0 0 0 3px rgba(229,184,74,0.07)}
+.lead-head{display:flex;align-items:center;gap:9px;margin-bottom:7px}
+.lead-init{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0}
+.lead-name{font-size:13px;font-weight:600;color:var(--ink);flex:1}
+.lead-type{font-size:11px;color:var(--ink3)}
+.lead-dna{font-size:13px;font-weight:700;flex-shrink:0}
+.sku-box{background:#E1F5EE;border-radius:var(--r-sm);padding:7px 9px;margin-bottom:7px}
+.sku-box p{font-size:11px;color:#085041;line-height:1.5}
+.opener-box{background:#E6F1FB;border-radius:var(--r-sm);padding:7px 9px;margin-bottom:7px}
+.opener-box p{font-size:11px;color:#0C447C;font-style:italic;line-height:1.5}
+.hbar{height:3px;background:var(--bone);border-radius:2px;overflow:hidden}
+.hfill{height:100%;border-radius:2px}
+.btn-primary{width:100%;padding:11px;border-radius:var(--r-sm);background:var(--mid);color:#fff;font-size:13px;font-weight:600;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:7px;margin-top:10px;transition:opacity 0.15s;font-family:'Inter',sans-serif}
+.btn-primary:hover{opacity:0.85}
+
+.toast{position:fixed;bottom:22px;right:22px;background:var(--mid);color:#fff;padding:9px 14px;border-radius:var(--r-sm);font-size:13px;display:flex;align-items:center;gap:7px;border-left:3px solid var(--gold);z-index:9999;opacity:0;transform:translateY(5px);transition:all .22s;pointer-events:none;box-shadow:0 8px 24px rgba(0,0,0,0.25)}
+.toast.show{opacity:1;transform:translateY(0)}
+
+@media(max-width:768px){.layout{grid-template-columns:1fr}.map{min-height:280px}.sidebar{border-left:none;border-top:0.5px solid var(--bd)}.demo-nav-label{display:none}}
+</style>
+</head>
+<body>
+<div class="page">
+
+<nav class="demo-nav">
+  <div class="demo-nav-logo">
+    <svg width="20" height="20" viewBox="0 0 64 64" fill="none"><rect width="64" height="64" rx="12" fill="#0F2240"/><circle cx="32" cy="32" r="7" fill="#E5B84A"/><circle cx="32" cy="11" r="2.5" fill="#E5B84A" opacity="0.9"/><circle cx="11" cy="32" r="2.5" fill="#E5B84A" opacity="0.7"/><line x1="32" y1="25" x2="32" y2="13.5" stroke="#E5B84A" stroke-width="0.8" stroke-opacity="0.5"/><line x1="25" y1="32" x2="13.5" y2="32" stroke="#E5B84A" stroke-width="0.8" stroke-opacity="0.4"/></svg>
+    <span class="demo-nav-wm">Sales<span>Lumi</span></span>
+  </div>
+  <span class="demo-nav-label">Demos:</span>
+  <a href="index.html"><i class="ti ti-briefcase" style="font-size:13px"></i> Vendedor</a>
+  <a href="gerente.html"><i class="ti ti-chart-bar" style="font-size:13px"></i> Gerente</a>
+  <a href="diretor.html"><i class="ti ti-telescope" style="font-size:13px"></i> Diretor</a>
+  <a href="prospeccao.html" class="current"><i class="ti ti-map-pin" style="font-size:13px"></i> Prospecção</a>
+  <a href="brand.html"><i class="ti ti-palette" style="font-size:13px"></i> Brand</a>
+</nav>
+
+<div class="topbar">
+  <div>
+    <div class="topbar-title">Prospecção por proximidade</div>
+    <div class="topbar-sub">4 leads com DNA 80%+ em 600m · Vila Madalena</div>
+  </div>
+  <span class="topbar-badge"><i class="ti ti-map-pin" style="font-size:12px"></i> Vila Madalena</span>
+</div>
+
+<div class="layout">
+  <div class="map" id="map">
+    <div class="road-h" style="top:33%"></div>
+    <div class="road-h" style="top:60%"></div>
+    <div class="road-v" style="left:30%"></div>
+    <div class="road-v" style="left:65%"></div>
+    <div class="road-sm-h" style="top:18%"></div>
+    <div class="road-sm-h" style="top:75%"></div>
+    <div class="road-sm-v" style="left:14%"></div>
+    <div class="road-sm-v" style="left:50%"></div>
+    <div class="block" style="left:8%;top:8%;width:19%;height:23%"></div>
+    <div class="block" style="left:31%;top:8%;width:16%;height:23%"></div>
+    <div class="block" style="left:50%;top:8%;width:13%;height:23%"></div>
+    <div class="block" style="left:67%;top:8%;width:20%;height:23%"></div>
+    <div class="block" style="left:8%;top:36%;width:19%;height:21%"></div>
+    <div class="block" style="left:31%;top:36%;width:16%;height:21%"></div>
+    <div class="block" style="left:50%;top:36%;width:13%;height:21%"></div>
+    <div class="block" style="left:67%;top:36%;width:20%;height:21%"></div>
+    <div class="block" style="left:8%;top:63%;width:19%;height:28%"></div>
+    <div class="block" style="left:31%;top:63%;width:16%;height:28%"></div>
+    <div class="block" style="left:67%;top:63%;width:20%;height:28%"></div>
+    <div class="street-label" style="top:30%;left:31%">R. Aspicuelta</div>
+    <div class="street-label" style="top:57%;left:45%">R. Fradique Coutinho</div>
+
+    <div class="pin you" style="top:50%;left:50%">
+      <div class="pin-bubble pin-mid">Você</div>
+      <div class="pin-dot" style="background:var(--mid)"></div>
+    </div>
+    <div class="pin" style="top:26%;left:37%" onclick="selectLead('ep')">
+      <div class="pin-bubble pin-gold">Empório Paulistano</div>
+      <div class="pin-dot" style="background:var(--gold)"></div>
+    </div>
+    <div class="pin" style="top:70%;left:24%" onclick="selectLead('bc')">
+      <div class="pin-bubble pin-sig">Bar Conceito</div>
+      <div class="pin-dot" style="background:var(--sig)"></div>
+    </div>
+    <div class="pin" style="top:43%;left:72%" onclick="selectLead('dv')">
+      <div class="pin-bubble pin-blue">Deli Vila</div>
+      <div class="pin-dot" style="background:#378ADD"></div>
+    </div>
+
+    <div class="legend">
+      <div class="leg-item"><div class="leg-dot" style="background:var(--gold)"></div>DNA 90%+</div>
+      <div class="leg-item"><div class="leg-dot" style="background:var(--sig)"></div>DNA 70–89%</div>
+      <div class="leg-item"><div class="leg-dot" style="background:#378ADD"></div>DNA 50–69%</div>
+    </div>
+  </div>
+
+  <div class="sidebar">
+    <div class="sb-label">Leads próximos — toque para ver</div>
+
+    <div class="lead-card sel" id="lead-ep" onclick="selectLead('ep')">
+      <div class="lead-head">
+        <div class="lead-init" style="background:#FAEEDA;color:#633806">EP</div>
+        <div style="flex:1"><div class="lead-name">Empório Paulistano</div><div class="lead-type">Mercearia fina · 180m</div></div>
+        <span class="lead-dna" style="color:var(--sig)">94%</span>
+      </div>
+      <div class="sku-box"><p><strong>SKU:</strong> Kit Vinhos Argentinos Premium · Pot. R$3.200/mês · giro 11 dias</p></div>
+      <div class="opener-box"><p>"Passando perto e vi que o Empório tem ótimas avaliações. Trabalho com distribuidora especializada — posso mostrar algo que complementa exatamente o perfil do seu cliente?"</p></div>
+      <div class="hbar"><div class="hfill" style="width:94%;background:var(--gold)"></div></div>
+    </div>
+
+    <div class="lead-card" id="lead-bc" onclick="selectLead('bc')">
+      <div class="lead-head">
+        <div class="lead-init" style="background:#E1F5EE;color:#085041">BC</div>
+        <div style="flex:1"><div class="lead-name">Bar Conceito Aspicuelta</div><div class="lead-type">Bar premium · 340m</div></div>
+        <span class="lead-dna" style="color:var(--sig)">81%</span>
+      </div>
+      <div class="sku-box"><p><strong>SKU:</strong> Linha de Cervejas Artesanais Vol. 2 · Pot. R$1.800/mês · giro 9 dias</p></div>
+      <div class="opener-box"><p>"Vi que vocês têm uma seleção de cervejas artesanais. Tenho uma linha nova que vendeu muito bem em bares com o mesmo perfil aqui na região — posso deixar uma amostra?"</p></div>
+      <div class="hbar"><div class="hfill" style="width:81%;background:var(--sig)"></div></div>
+    </div>
+
+    <div class="lead-card" id="lead-dv" onclick="selectLead('dv')">
+      <div class="lead-head">
+        <div class="lead-init" style="background:#E6F1FB;color:#0C447C">DV</div>
+        <div style="flex:1"><div class="lead-name">Deli Vila</div><div class="lead-type">Delicatessen · 490m</div></div>
+        <span class="lead-dna" style="color:#378ADD">67%</span>
+      </div>
+      <div class="sku-box"><p><strong>SKU:</strong> Kit Vinhos de Entrada · Pot. R$900/mês · giro 14 dias</p></div>
+      <div class="opener-box"><p>"Sou da distribuidora aqui da região e notei que vocês têm um público que combina bastante com nossa linha de entrada. Posso mostrar alguns rótulos?"</p></div>
+      <div class="hbar"><div class="hfill" style="width:67%;background:#378ADD"></div></div>
+    </div>
+
+    <button class="btn-primary" id="add-btn" onclick="addToMission()">
+      <i class="ti ti-plus" style="font-size:14px"></i> Adicionar à missão do dia
+    </button>
+  </div>
+</div>
+
+</div>
+
+<div class="toast" id="toast"><i class="ti ti-check" style="font-size:14px;color:var(--gold)"></i><span id="toast-msg"></span></div>
+
+<script>
+const leads={ep:'Empório Paulistano',bc:'Bar Conceito Aspicuelta',dv:'Deli Vila'};
+let current='ep';
+function selectLead(id){
+  document.querySelectorAll('.lead-card').forEach(c=>c.classList.remove('sel'));
+  document.getElementById('lead-'+id).classList.add('sel');
+  current=id;
+}
+function addToMission(){
+  showToast(leads[current]+' adicionado à missão do dia!');
+}
+let toastT;
+function showToast(msg){
+  const t=document.getElementById('toast');
+  document.getElementById('toast-msg').textContent=msg;
+  t.classList.add('show');
+  clearTimeout(toastT);
+  toastT=setTimeout(()=>t.classList.remove('show'),2800);
+}
+</script>
+</body>
+</html>

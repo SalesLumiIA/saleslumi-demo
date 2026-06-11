@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SalesLumi IA — Torre de Controle (Gerente)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<style>
+:root {
+  --mid:#0A1628; --gold:#E5B84A; --gold-d:#B8922A;
+  --sig:#1D9E75; --risk:#E24B4A; --warn:#EF9F27;
+  --bone:#F5F4F0; --ink:#1C1C1A; --ink2:#444441; --ink3:#888780;
+  --bd:rgba(0,0,0,0.08); --r:10px; --r-sm:6px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:var(--bone);color:var(--ink)}
+
+/* TOP NAV */
+.demo-nav{background:#0A1628;padding:8px 20px;display:flex;align-items:center;gap:8px;border-bottom:0.5px solid rgba(255,255,255,0.08);position:sticky;top:0;z-index:50}
+.demo-nav-label{font-size:10px;color:rgba(255,255,255,0.3);letter-spacing:0.6px;text-transform:uppercase;margin-right:4px}
+.demo-nav a{font-size:12px;font-weight:500;color:rgba(255,255,255,0.5);text-decoration:none;padding:5px 12px;border-radius:20px;border:0.5px solid rgba(255,255,255,0.1);transition:all 0.15s;display:flex;align-items:center;gap:5px}
+.demo-nav a:hover{color:#fff;border-color:rgba(255,255,255,0.25);background:rgba(255,255,255,0.05)}
+.demo-nav a.current{color:var(--gold);border-color:var(--gold);background:rgba(229,184,74,0.1)}
+.demo-nav-logo{display:flex;align-items:center;gap:7px;margin-right:auto}
+.demo-nav-wm{font-size:14px;font-weight:900;color:#fff;letter-spacing:-0.4px}
+.demo-nav-wm span{color:var(--gold)}
+
+.wrap{max-width:1100px;margin:0 auto;padding:20px}
+.topbar{background:var(--mid);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;border-radius:var(--r) var(--r) 0 0}
+.topbar-left{display:flex;align-items:center;gap:10px}
+.logo{color:var(--gold);font-size:16px;font-weight:700}
+.topbar-sep{color:rgba(255,255,255,0.2)}
+.topbar-title{color:rgba(255,255,255,0.65);font-size:13px}
+.topbar-date{color:rgba(255,255,255,0.3);font-size:12px}
+.body{padding:16px;background:#fff;border-radius:0 0 var(--r) var(--r);border:0.5px solid var(--bd);border-top:none}
+
+.section-label{font-size:11px;font-weight:600;color:var(--ink3);letter-spacing:0.7px;text-transform:uppercase;margin-bottom:10px}
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.kpi{background:var(--bone);border-radius:var(--r);padding:12px 14px}
+.kpi-label{font-size:11px;color:var(--ink3);margin-bottom:4px}
+.kpi-val{font-size:22px;font-weight:700;color:var(--ink)}
+.kpi-sub{font-size:11px;margin-top:3px}
+.up{color:var(--sig)}.down{color:var(--risk)}.neutral{color:var(--ink3)}
+
+.card{background:#fff;border:0.5px solid var(--bd);border-radius:var(--r);padding:14px 16px;margin-bottom:12px}
+.card-title{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:12px;display:flex;align-items:center;justify-content:space-between}
+.ia-tag{font-size:10px;background:#FAEEDA;color:#633806;padding:2px 8px;border-radius:12px;font-weight:600}
+
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px}
+.deal-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:0.5px solid var(--bd)}
+.deal-row:last-child{border-bottom:none;padding-bottom:0}
+.deal-initials{width:32px;height:32px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+.deal-info{flex:1;min-width:0}
+.deal-name{font-size:13px;font-weight:600;color:var(--ink);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.deal-meta{font-size:11px;color:var(--ink3)}
+.deal-right{text-align:right;flex-shrink:0}
+.deal-val{font-size:13px;font-weight:600;color:var(--ink)}
+.farol{width:9px;height:9px;border-radius:50%;display:inline-block;margin-left:6px}
+.f-verde{background:var(--sig)}.f-amarelo{background:var(--warn)}.f-vermelho{background:var(--risk)}
+
+.rep-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:0.5px solid var(--bd)}
+.rep-row:last-child{border-bottom:none}
+.rep-av{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+.bar-wrap{flex:1;height:6px;background:var(--bone);border-radius:3px;overflow:hidden}
+.bar-fill{height:100%;border-radius:3px}
+.bar-green{background:var(--sig)}.bar-amber{background:var(--warn)}.bar-red{background:var(--risk)}
+.rep-pct{font-size:12px;font-weight:600;min-width:34px;text-align:right;color:var(--ink)}
+
+.oraculo{background:var(--mid);border-radius:var(--r);padding:14px 16px;margin-bottom:12px}
+.oraculo-label{font-size:10px;color:var(--gold);letter-spacing:0.6px;text-transform:uppercase;font-weight:600;margin-bottom:8px}
+.oraculo-q{font-size:13px;color:rgba(255,255,255,0.5);margin-bottom:8px}
+.oraculo-a{font-size:13px;color:rgba(255,255,255,0.88);line-height:1.55}
+.oraculo-highlight{color:var(--gold);font-weight:600}
+.oraculo-green{color:#5DCAA5;font-weight:600}
+
+.churn-row{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:0.5px solid var(--bd)}
+.churn-row:last-child{border-bottom:none}
+.churn-badge{font-size:10px;font-weight:600;padding:2px 8px;border-radius:12px;flex-shrink:0;margin-top:1px}
+.ch-alto{background:#FCEBEB;color:#791F1F}
+.ch-medio{background:#FAEEDA;color:#633806}
+
+@media(max-width:768px){.kpi-grid,.two-col{grid-template-columns:1fr 1fr}.demo-nav-label{display:none}}
+@media(max-width:560px){.kpi-grid,.two-col{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<nav class="demo-nav">
+  <div class="demo-nav-logo">
+    <svg width="20" height="20" viewBox="0 0 64 64" fill="none"><rect width="64" height="64" rx="12" fill="#0F2240"/><circle cx="32" cy="32" r="7" fill="#E5B84A"/><circle cx="32" cy="11" r="2.5" fill="#E5B84A" opacity="0.9"/><circle cx="11" cy="32" r="2.5" fill="#E5B84A" opacity="0.7"/><line x1="32" y1="25" x2="32" y2="13.5" stroke="#E5B84A" stroke-width="0.8" stroke-opacity="0.5"/><line x1="25" y1="32" x2="13.5" y2="32" stroke="#E5B84A" stroke-width="0.8" stroke-opacity="0.4"/></svg>
+    <span class="demo-nav-wm">Sales<span>Lumi</span></span>
+  </div>
+  <span class="demo-nav-label">Demos:</span>
+  <a href="index.html"><i class="ti ti-briefcase" style="font-size:13px"></i> Vendedor</a>
+  <a href="gerente.html" class="current"><i class="ti ti-chart-bar" style="font-size:13px"></i> Gerente</a>
+  <a href="diretor.html"><i class="ti ti-telescope" style="font-size:13px"></i> Diretor</a>
+  <a href="prospeccao.html"><i class="ti ti-map-pin" style="font-size:13px"></i> Prospecção</a>
+  <a href="brand.html"><i class="ti ti-palette" style="font-size:13px"></i> Brand</a>
+</nav>
+
+<div class="wrap">
+  <div class="topbar">
+    <div class="topbar-left">
+      <span class="logo">SalesLumi IA</span>
+      <span class="topbar-sep">/</span>
+      <span class="topbar-title">Torre de Controle — Gerente</span>
+    </div>
+    <span class="topbar-date">Jun 2026 · semana 3</span>
+  </div>
+
+  <div class="body">
+    <p class="section-label">Visão geral da operação</p>
+    <div class="kpi-grid">
+      <div class="kpi"><div class="kpi-label">Receita no mês</div><div class="kpi-val">R$312k</div><div class="kpi-sub up">+18% vs. mês anterior</div></div>
+      <div class="kpi"><div class="kpi-label">Meta do mês</div><div class="kpi-val">R$400k</div><div class="kpi-sub neutral">78% atingido</div></div>
+      <div class="kpi"><div class="kpi-label">Forecast IA</div><div class="kpi-val">R$391k</div><div class="kpi-sub down">R$9k abaixo da meta</div></div>
+      <div class="kpi"><div class="kpi-label">Negócios em risco</div><div class="kpi-val">3</div><div class="kpi-sub down">ação necessária</div></div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">
+        <span><i class="ti ti-chart-bar" style="font-size:15px;margin-right:6px;color:var(--ink3)"></i>Forecast de meta</span>
+        <span class="ia-tag">IA preditiva</span>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:12px;color:var(--ink3);margin-bottom:6px">
+        <span>Realizado até hoje</span>
+        <span style="font-weight:600;color:var(--ink)">R$312k / R$400k</span>
+      </div>
+      <div style="position:relative;height:10px;background:var(--bone);border-radius:5px;margin-bottom:10px">
+        <div style="position:absolute;top:0;left:0;width:97.8%;height:100%;border-radius:5px;background:#B5D4F4"></div>
+        <div style="position:absolute;top:0;left:0;width:78%;height:100%;border-radius:5px;background:var(--sig)"></div>
+        <div style="position:absolute;top:-5px;left:97.8%;width:2px;height:20px;background:var(--risk);border-radius:1px"></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--ink3);margin-bottom:4px">
+        <span>0</span><span style="color:var(--sig);font-weight:600">R$312k atual</span><span style="color:#185FA5">R$391k projetado</span><span style="color:var(--risk)">R$400k meta</span>
+      </div>
+      <div style="background:#FCEBEB;border-radius:var(--r-sm);padding:10px 12px;margin-top:8px">
+        <p style="font-size:12px;color:#791F1F;line-height:1.5"><i class="ti ti-brain" style="font-size:13px;margin-right:4px"></i><strong style="color:#A32D2D">Alerta IA:</strong> Com a velocidade atual de fechamento, a meta não será atingida. Para fechar o gap de R$9k, a IA recomenda priorizar <strong style="color:#A32D2D">Empório Jardins</strong> (R$6.200 potencial) e <strong style="color:#A32D2D">Bar do Zé</strong> (R$3.800 potencial) até dia 27.</p>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div class="card" style="margin-bottom:0">
+        <div class="card-title">
+          <span><i class="ti ti-radar" style="font-size:15px;margin-right:6px;color:var(--ink3)"></i>Top negócios</span>
+          <span style="font-size:11px;color:var(--ink3)">farol de risco</span>
+        </div>
+        <div class="deal-row">
+          <div class="deal-initials" style="background:#E1F5EE;color:#085041">AS</div>
+          <div class="deal-info"><div class="deal-name">Adega São Bento</div><div class="deal-meta">Rafael · up-sell</div></div>
+          <div class="deal-right"><div class="deal-val">R$890<span class="farol f-verde"></span></div><div style="font-size:10px;color:var(--ink3)">91% fechamento</div></div>
+        </div>
+        <div class="deal-row">
+          <div class="deal-initials" style="background:#E6F1FB;color:#0C447C">EJ</div>
+          <div class="deal-info"><div class="deal-name">Empório Jardins</div><div class="deal-meta">Camila · expansão</div></div>
+          <div class="deal-right"><div class="deal-val">R$6.2k<span class="farol f-amarelo"></span></div><div style="font-size:10px;color:var(--ink3)">68% fechamento</div></div>
+        </div>
+        <div class="deal-row">
+          <div class="deal-initials" style="background:#FAEEDA;color:#633806">BZ</div>
+          <div class="deal-info"><div class="deal-name">Bar do Zé</div><div class="deal-meta">Rafael · reativação</div></div>
+          <div class="deal-right"><div class="deal-val">R$3.8k<span class="farol f-amarelo"></span></div><div style="font-size:10px;color:var(--ink3)">74% fechamento</div></div>
+        </div>
+        <div class="deal-row">
+          <div class="deal-initials" style="background:#FAECE7;color:#712B13">DV</div>
+          <div class="deal-info"><div class="deal-name">Distribuidora Villa</div><div class="deal-meta">Lucas · prospecção</div></div>
+          <div class="deal-right"><div class="deal-val">R$12k<span class="farol f-vermelho"></span></div><div style="font-size:10px;color:var(--ink3)">41% fechamento</div></div>
+        </div>
+        <div class="deal-row">
+          <div class="deal-initials" style="background:#EEEDFE;color:#3C3489">WB</div>
+          <div class="deal-info"><div class="deal-name">Wine Bar Paulista</div><div class="deal-meta">Camila · nova conta</div></div>
+          <div class="deal-right"><div class="deal-val">R$5.4k<span class="farol f-verde"></span></div><div style="font-size:10px;color:var(--ink3)">88% fechamento</div></div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:0">
+        <div class="card-title">
+          <span><i class="ti ti-users" style="font-size:15px;margin-right:6px;color:var(--ink3)"></i>Performance do time</span>
+          <span class="ia-tag">IA mentor</span>
+        </div>
+        <div class="rep-row">
+          <div class="rep-av" style="background:#E1F5EE;color:#085041">CA</div>
+          <div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:600;color:var(--ink)">Camila A.</div><div style="font-size:11px;color:var(--ink3);margin-bottom:2px">12 visitas · 4 fechamentos</div><div style="display:flex;align-items:center;gap:8px"><div class="bar-wrap"><div class="bar-fill bar-green" style="width:92%"></div></div><span class="rep-pct">92%</span></div></div>
+        </div>
+        <div class="rep-row">
+          <div class="rep-av" style="background:#E6F1FB;color:#0C447C">RF</div>
+          <div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:600;color:var(--ink)">Rafael F.</div><div style="font-size:11px;color:var(--ink3);margin-bottom:2px">9 visitas · 3 fechamentos</div><div style="display:flex;align-items:center;gap:8px"><div class="bar-wrap"><div class="bar-fill bar-green" style="width:78%"></div></div><span class="rep-pct">78%</span></div></div>
+        </div>
+        <div class="rep-row">
+          <div class="rep-av" style="background:#FAEEDA;color:#633806">LC</div>
+          <div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:600;color:var(--ink)">Lucas C.</div><div style="font-size:11px;color:var(--ink3);margin-bottom:2px">11 visitas · 2 fechamentos</div><div style="display:flex;align-items:center;gap:8px"><div class="bar-wrap"><div class="bar-fill bar-amber" style="width:54%"></div></div><span class="rep-pct">54%</span></div></div>
+        </div>
+        <div class="rep-row">
+          <div class="rep-av" style="background:#FCEBEB;color:#791F1F">MB</div>
+          <div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:600;color:var(--ink)">Marina B.</div><div style="font-size:11px;color:var(--ink3);margin-bottom:2px">8 visitas · 1 fechamento</div><div style="display:flex;align-items:center;gap:8px"><div class="bar-wrap"><div class="bar-fill bar-red" style="width:31%"></div></div><span class="rep-pct">31%</span></div></div>
+        </div>
+        <div style="background:#FAEEDA;border-radius:var(--r-sm);padding:9px 11px;margin-top:10px">
+          <p style="font-size:12px;color:#633806;line-height:1.5"><i class="ti ti-brain" style="font-size:13px;margin-right:3px"></i><strong style="color:#854F0B">IA detectou:</strong> Marina perde 80% das vendas na etapa de precificação. Sugestão: pílula de treinamento em negociação de valor + visita conjunta essa semana.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">
+        <span><i class="ti ti-message-2" style="font-size:15px;margin-right:6px;color:var(--ink3)"></i>Oráculo — pergunte à IA</span>
+        <span class="ia-tag">linguagem natural</span>
+      </div>
+      <div class="oraculo" style="margin-bottom:0">
+        <div class="oraculo-label">Gerente Carlos — agora</div>
+        <div class="oraculo-q">"Qual o risco de não batermos a meta considerando as objeções atuais?"</div>
+        <div style="font-size:11px;color:var(--gold);margin-bottom:6px"><i class="ti ti-brain" style="font-size:13px"></i> SalesLumi — resposta</div>
+        <div class="oraculo-a">Risco de <span class="oraculo-highlight">não atingir a meta: 64%</span> com o pipeline atual. O gargalo não é volume de visitas — é a taxa de conversão de Lucas e Marina nas contas acima de R$5k. Se as duas contas em farol amarelo (Empório Jardins + Bar do Zé) avançarem, o risco cai para <span class="oraculo-green">28%</span>. Recomendo acionar o dossiê de abordagem específico para essas contas hoje.</div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:0">
+      <div class="card-title">
+        <span><i class="ti ti-alert-triangle" style="font-size:15px;margin-right:6px;color:var(--ink3)"></i>Radar de churn silencioso</span>
+        <span class="ia-tag">IA preditiva</span>
+      </div>
+      <div class="churn-row">
+        <span class="churn-badge ch-alto">Risco alto</span>
+        <div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:600;color:var(--ink)">Distribuidora Pinheiro</div><div style="font-size:11px;color:var(--ink3)"><i class="ti ti-trending-down" style="font-size:12px"></i> Volume caiu 61% vs. média — 3 pedidos sem resposta</div></div>
+        <div style="font-size:11px;color:var(--ink3)">há 47 dias</div>
+      </div>
+      <div class="churn-row">
+        <span class="churn-badge ch-alto">Risco alto</span>
+        <div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:600;color:var(--ink)">Cervejaria Lapa</div><div style="font-size:11px;color:var(--ink3)"><i class="ti ti-trending-down" style="font-size:12px"></i> Sem recompra há 38 dias · padrão de saída detectado</div></div>
+        <div style="font-size:11px;color:var(--ink3)">há 38 dias</div>
+      </div>
+      <div class="churn-row">
+        <span class="churn-badge ch-medio">Risco médio</span>
+        <div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:600;color:var(--ink)">Empório Moema</div><div style="font-size:11px;color:var(--ink3)"><i class="ti ti-minus" style="font-size:12px"></i> Ticket médio caiu 34% — possível teste de concorrente</div></div>
+        <div style="font-size:11px;color:var(--ink3)">há 21 dias</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

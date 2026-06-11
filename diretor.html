@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SalesLumi IA — BI de Cúpula (Diretor)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@2.44.0/tabler-icons.min.css">
+<style>
+:root {
+  --mid:#0A1628; --gold:#E5B84A; --gold-d:#B8922A;
+  --sig:#1D9E75; --risk:#E24B4A; --warn:#EF9F27;
+  --bone:#F5F4F0; --ink:#1C1C1A; --ink2:#444441; --ink3:#888780;
+  --bd:rgba(0,0,0,0.08); --r:10px; --r-sm:6px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:var(--bone);color:var(--ink)}
+
+.demo-nav{background:#0A1628;padding:8px 20px;display:flex;align-items:center;gap:8px;border-bottom:0.5px solid rgba(255,255,255,0.08);position:sticky;top:0;z-index:50}
+.demo-nav-label{font-size:10px;color:rgba(255,255,255,0.3);letter-spacing:0.6px;text-transform:uppercase;margin-right:4px}
+.demo-nav a{font-size:12px;font-weight:500;color:rgba(255,255,255,0.5);text-decoration:none;padding:5px 12px;border-radius:20px;border:0.5px solid rgba(255,255,255,0.1);transition:all 0.15s;display:flex;align-items:center;gap:5px}
+.demo-nav a:hover{color:#fff;border-color:rgba(255,255,255,0.25);background:rgba(255,255,255,0.05)}
+.demo-nav a.current{color:var(--gold);border-color:var(--gold);background:rgba(229,184,74,0.1)}
+.demo-nav-logo{display:flex;align-items:center;gap:7px;margin-right:auto}
+.demo-nav-wm{font-size:14px;font-weight:900;color:#fff;letter-spacing:-0.4px}
+.demo-nav-wm span{color:var(--gold)}
+
+.wrap{max-width:1100px;margin:0 auto;padding:20px}
+.topbar{background:var(--mid);padding:14px 20px;display:flex;align-items:center;justify-content:space-between;border-radius:var(--r) var(--r) 0 0}
+.topbar-left{display:flex;align-items:center;gap:10px}
+.logo{color:var(--gold);font-size:16px;font-weight:700}
+.topbar-sep{color:rgba(255,255,255,0.2)}
+.topbar-title{color:rgba(255,255,255,0.65);font-size:13px}
+.topbar-date{color:rgba(255,255,255,0.3);font-size:12px}
+.body{padding:16px;background:#fff;border-radius:0 0 var(--r) var(--r);border:0.5px solid var(--bd);border-top:none}
+
+.section-label{font-size:11px;font-weight:600;color:var(--ink3);letter-spacing:0.7px;text-transform:uppercase;margin-bottom:10px}
+.kpi-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.kpi{background:var(--bone);border-radius:var(--r);padding:12px 14px}
+.kpi-label{font-size:11px;color:var(--ink3);margin-bottom:4px}
+.kpi-val{font-size:22px;font-weight:700;color:var(--ink)}
+.kpi-sub{font-size:11px;margin-top:3px}
+.up{color:var(--sig)}.down{color:var(--risk)}.neutral{color:var(--ink3)}
+
+.card{background:#fff;border:0.5px solid var(--bd);border-radius:var(--r);padding:14px 16px;margin-bottom:12px}
+.card-title{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:12px;display:flex;align-items:center;justify-content:space-between}
+.ia-tag{font-size:10px;background:#FAEEDA;color:#633806;padding:2px 8px;border-radius:12px;font-weight:600}
+
+.oraculo{background:var(--mid);border-radius:var(--r);padding:14px 16px;margin-bottom:12px}
+.oraculo-label{font-size:10px;color:var(--gold);letter-spacing:0.6px;text-transform:uppercase;font-weight:600;margin-bottom:10px}
+.oraculo-q{font-size:13px;color:rgba(255,255,255,0.45);margin-bottom:8px}
+.oraculo-a{font-size:13px;color:rgba(255,255,255,0.85);line-height:1.6}
+.oraculo-h{color:var(--gold);font-weight:600}
+.oraculo-g{color:#5DCAA5;font-weight:600}
+
+.region-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:0.5px solid var(--bd)}
+.region-row:last-child{border-bottom:none}
+.reg-name{font-size:13px;font-weight:600;color:var(--ink);min-width:120px}
+.reg-bar-wrap{flex:1;height:7px;background:var(--bone);border-radius:4px;overflow:hidden}
+.reg-bar{height:100%;border-radius:4px}
+.reg-val{font-size:12px;font-weight:600;color:var(--ink);min-width:48px;text-align:right}
+.reg-badge{font-size:10px;padding:2px 8px;border-radius:12px;font-weight:600;min-width:64px;text-align:center}
+.rb-dom{background:#E1F5EE;color:#085041}
+.rb-cres{background:#E6F1FB;color:#0C447C}
+.rb-gap{background:#FCEBEB;color:#791F1F}
+.rb-lat{background:#FAEEDA;color:#633806}
+
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.vuln-row{display:flex;align-items:flex-start;gap:10px;padding:9px 0;border-bottom:0.5px solid var(--bd)}
+.vuln-row:last-child{border-bottom:none}
+.vuln-badge{font-size:10px;font-weight:600;padding:2px 8px;border-radius:12px;flex-shrink:0;margin-top:1px}
+.vb-a{background:#E1F5EE;color:#085041}
+.vb-b{background:#E6F1FB;color:#0C447C}
+.vuln-comp{font-size:13px;font-weight:600;color:var(--ink)}
+.vuln-sig{font-size:11px;color:var(--ink3);margin-top:2px;line-height:1.4}
+.vuln-right{margin-left:auto;text-align:right;flex-shrink:0}
+.vuln-pot{font-size:13px;font-weight:600;color:var(--sig)}
+.vuln-label{font-size:10px;color:var(--ink3)}
+
+.whatif-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.whatif-label{font-size:13px;color:var(--ink3);min-width:140px}
+.whatif-val{font-size:13px;font-weight:600;color:var(--ink);min-width:30px;text-align:right}
+.result-box{background:#E1F5EE;border-radius:var(--r-sm);padding:12px 14px;margin-top:4px}
+.result-box p{font-size:13px;color:#085041;line-height:1.5}
+
+.trend-item{padding:10px 0;border-bottom:0.5px solid var(--bd)}
+.trend-item:last-child{border-bottom:none}
+.trend-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:3px}
+.trend-name{font-size:13px;font-weight:600;color:var(--ink)}
+.trend-dir{font-size:11px;display:flex;align-items:center;gap:3px}
+.trend-body{font-size:12px;color:var(--ink3);line-height:1.45}
+
+@media(max-width:768px){.kpi-grid,.two-col{grid-template-columns:1fr 1fr}.demo-nav-label{display:none}}
+@media(max-width:560px){.kpi-grid,.two-col{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<nav class="demo-nav">
+  <div class="demo-nav-logo">
+    <svg width="20" height="20" viewBox="0 0 64 64" fill="none"><rect width="64" height="64" rx="12" fill="#0F2240"/><circle cx="32" cy="32" r="7" fill="#E5B84A"/><circle cx="32" cy="11" r="2.5" fill="#E5B84A" opacity="0.9"/><circle cx="11" cy="32" r="2.5" fill="#E5B84A" opacity="0.7"/><line x1="32" y1="25" x2="32" y2="13.5" stroke="#E5B84A" stroke-width="0.8" stroke-opacity="0.5"/><line x1="25" y1="32" x2="13.5" y2="32" stroke="#E5B84A" stroke-width="0.8" stroke-opacity="0.4"/></svg>
+    <span class="demo-nav-wm">Sales<span>Lumi</span></span>
+  </div>
+  <span class="demo-nav-label">Demos:</span>
+  <a href="index.html"><i class="ti ti-briefcase" style="font-size:13px"></i> Vendedor</a>
+  <a href="gerente.html"><i class="ti ti-chart-bar" style="font-size:13px"></i> Gerente</a>
+  <a href="diretor.html" class="current"><i class="ti ti-telescope" style="font-size:13px"></i> Diretor</a>
+  <a href="prospeccao.html"><i class="ti ti-map-pin" style="font-size:13px"></i> Prospecção</a>
+  <a href="brand.html"><i class="ti ti-palette" style="font-size:13px"></i> Brand</a>
+</nav>
+
+<div class="wrap">
+  <div class="topbar">
+    <div class="topbar-left">
+      <span class="logo">SalesLumi IA</span>
+      <span class="topbar-sep">/</span>
+      <span class="topbar-title">BI de cúpula — Diretor</span>
+    </div>
+    <span class="topbar-date">Jun 2026 · visão estratégica</span>
+  </div>
+
+  <div class="body">
+    <p class="section-label">Visão macro do negócio</p>
+    <div class="kpi-grid">
+      <div class="kpi"><div class="kpi-label">Receita anual (run rate)</div><div class="kpi-val">R$4,1M</div><div class="kpi-sub up">+27% vs. ano anterior</div></div>
+      <div class="kpi"><div class="kpi-label">Market share SP capital</div><div class="kpi-val">18%</div><div class="kpi-sub up">+4pp em 6 meses</div></div>
+      <div class="kpi"><div class="kpi-label">Potencial latente</div><div class="kpi-val">R$2,8M</div><div class="kpi-sub neutral">não capturado ainda</div></div>
+      <div class="kpi"><div class="kpi-label">Churn rate</div><div class="kpi-val">4,2%</div><div class="kpi-sub up">-1,8pp vs. trim. anterior</div></div>
+    </div>
+
+    <div class="oraculo">
+      <div class="oraculo-label"><i class="ti ti-message-2" style="font-size:13px;margin-right:4px"></i>Oráculo — inteligência em linguagem natural</div>
+      <div class="oraculo-q">"Gemini, qual região de SP tem o maior potencial para o nosso SKU de entrada este mês?"</div>
+      <div class="oraculo-a">A análise do DNA de sucesso cruzada com dados do Censo e Google Maps aponta <span class="oraculo-h">Zona Leste de SP</span> como maior oportunidade imediata: densidade de bares e distribuidoras de médio porte 3× superior à média, com <span class="oraculo-h">apenas 6% de penetração</span> atual da carteira. Potencial estimado de <span class="oraculo-g">R$480k em 90 dias</span> com alocação de 2 vendedores. Segunda opção: ABC Paulista, com potencial de R$310k e menor competição direta.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">
+        <span><i class="ti ti-map" style="font-size:15px;margin-right:6px;color:var(--ink3)"></i>Domínio de território — SP capital</span>
+        <span class="ia-tag">DNA + Censo + Maps</span>
+      </div>
+      <div class="region-row">
+        <span class="reg-name">Vila Madalena</span>
+        <div class="reg-bar-wrap"><div class="reg-bar" style="width:88%;background:var(--sig)"></div></div>
+        <span class="reg-val">R$890k</span>
+        <span class="reg-badge rb-dom">Dominando</span>
+      </div>
+      <div class="region-row">
+        <span class="reg-name">Pinheiros</span>
+        <div class="reg-bar-wrap"><div class="reg-bar" style="width:72%;background:var(--sig)"></div></div>
+        <span class="reg-val">R$720k</span>
+        <span class="reg-badge rb-dom">Dominando</span>
+      </div>
+      <div class="region-row">
+        <span class="reg-name">Jardins</span>
+        <div class="reg-bar-wrap"><div class="reg-bar" style="width:55%;background:#378ADD"></div></div>
+        <span class="reg-val">R$540k</span>
+        <span class="reg-badge rb-cres">Crescendo</span>
+      </div>
+      <div class="region-row">
+        <span class="reg-name">Mooca</span>
+        <div class="reg-bar-wrap"><div class="reg-bar" style="width:31%;background:var(--warn)"></div></div>
+        <span class="reg-val">R$310k</span>
+        <span class="reg-badge rb-lat">Latente</span>
+      </div>
+      <div class="region-row">
+        <span class="reg-name">Zona Leste</span>
+        <div class="reg-bar-wrap"><div class="reg-bar" style="width:9%;background:var(--risk)"></div></div>
+        <span class="reg-val">R$88k</span>
+        <span class="reg-badge rb-gap">Gap crítico</span>
+      </div>
+      <div class="region-row">
+        <span class="reg-name">ABC Paulista</span>
+        <div class="reg-bar-wrap"><div class="reg-bar" style="width:14%;background:var(--risk)"></div></div>
+        <span class="reg-val">R$140k</span>
+        <span class="reg-badge rb-gap">Gap crítico</span>
+      </div>
+      <div style="background:#FAEEDA;border-radius:var(--r-sm);padding:10px 12px;margin-top:12px">
+        <p style="font-size:12px;color:#633806;line-height:1.5"><i class="ti ti-bulb" style="font-size:13px;margin-right:4px"></i><strong style="color:#854F0B">Buraco branco detectado:</strong> Zona Leste e ABC concentram 34% dos estabelecimentos do segmento no estado, mas representam apenas 7% da receita atual. Oportunidade de R$2,1M não capturada.</p>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div class="card" style="margin-bottom:12px">
+        <div class="card-title">
+          <span><i class="ti ti-eye-off" style="font-size:15px;margin-right:6px;color:var(--ink3)"></i>Vulnerabilidade da concorrência</span>
+        </div>
+        <div class="vuln-row">
+          <span class="vuln-badge vb-a">Atacar agora</span>
+          <div><div class="vuln-comp">Distribuidora Alfa</div><div class="vuln-sig">Avaliação Google caiu para 2,8★ — atrasos de entrega reportados por 14 clientes em maio</div></div>
+          <div class="vuln-right"><div class="vuln-pot">R$380k</div><div class="vuln-label">pot. capturável</div></div>
+        </div>
+        <div class="vuln-row">
+          <span class="vuln-badge vb-a">Atacar agora</span>
+          <div><div class="vuln-comp">Bebidas Sul</div><div class="vuln-sig">Notícia de rescisão com 3 fornecedores premium — clientes em busca de alternativa</div></div>
+          <div class="vuln-right"><div class="vuln-pot">R$210k</div><div class="vuln-label">pot. capturável</div></div>
+        </div>
+        <div class="vuln-row">
+          <span class="vuln-badge vb-b">Monitorar</span>
+          <div><div class="vuln-comp">BevMax SP</div><div class="vuln-sig">Queda de 18% nas avaliações — sem sinal claro ainda</div></div>
+          <div class="vuln-right"><div class="vuln-pot">R$95k</div><div class="vuln-label">pot. capturável</div></div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:12px">
+        <div class="card-title">
+          <span><i class="ti ti-calculator" style="font-size:15px;margin-right:6px;color:var(--ink3)"></i>Simulador what-if</span>
+          <span class="ia-tag">análise preditiva</span>
+        </div>
+        <p style="font-size:12px;color:var(--ink3);margin-bottom:12px">Cenário: contratar vendedores para a Zona Leste</p>
+        <div class="whatif-row">
+          <span class="whatif-label">Novos vendedores</span>
+          <input type="range" min="1" max="10" value="3" id="reps" step="1" style="flex:1">
+          <span class="whatif-val" id="reps-out">3</span>
+        </div>
+        <div class="whatif-row">
+          <span class="whatif-label">Meses de rampa</span>
+          <input type="range" min="1" max="6" value="2" id="ramp" step="1" style="flex:1">
+          <span class="whatif-val" id="ramp-out">2</span>
+        </div>
+        <div class="result-box">
+          <p><strong style="color:#0F6E56">Projeção IA:</strong> Com <span id="r-reps">3</span> vendedores e <span id="r-ramp">2</span> meses de rampa, receita incremental estimada de <strong style="color:#0F6E56" id="r-rev">R$486k</strong> no primeiro ano, ROI de <strong style="color:#0F6E56" id="r-roi">4,1×</strong> sobre o custo de contratação.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:0">
+      <div class="card-title">
+        <span><i class="ti ti-trending-up" style="font-size:15px;margin-right:6px;color:var(--ink3)"></i>Tendências de mercado detectadas pela IA</span>
+        <span class="ia-tag">news + dados</span>
+      </div>
+      <div class="trend-item">
+        <div class="trend-head"><span class="trend-name">Crescimento de vinhos naturais em SP</span><span class="trend-dir up"><i class="ti ti-trending-up" style="font-size:13px"></i> Alta acelerada</span></div>
+        <div class="trend-body">Buscas por "vinho natural" cresceram 340% em SP nos últimos 90 dias. Adegas do portfólio com esse mix vendem 2,3× mais rápido. Ação sugerida: ampliar SKUs naturais na carteira.</div>
+      </div>
+      <div class="trend-item">
+        <div class="trend-head"><span class="trend-name">Expansão do mercado de cervejas artesanais no ABC</span><span class="trend-dir up"><i class="ti ti-trending-up" style="font-size:13px"></i> Oportunidade</span></div>
+        <div class="trend-body">4 novos bares especializados abriram no ABC no último mês. DNA de sucesso confirma perfil idêntico às melhores contas da Vila Madalena. Potencial de R$180k sem concorrente estabelecido.</div>
+      </div>
+      <div class="trend-item">
+        <div class="trend-head"><span class="trend-name">Pressão de margem em cervejas mainstream</span><span class="trend-dir down"><i class="ti ti-trending-down" style="font-size:13px"></i> Atenção</span></div>
+        <div class="trend-body">Reajuste de 9% nos preços de fábrica das cervejas mainstream previsto para o próximo trimestre. Clientes com alto volume dessas SKUs terão pressão de margem — antecipar negociação de contrato antes do reajuste.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const repsEl=document.getElementById('reps'),rampEl=document.getElementById('ramp');
+const repsOut=document.getElementById('reps-out'),rampOut=document.getElementById('ramp-out');
+const rReps=document.getElementById('r-reps'),rRamp=document.getElementById('r-ramp'),rRev=document.getElementById('r-rev'),rRoi=document.getElementById('r-roi');
+function calc(){
+  const n=parseInt(repsEl.value),m=parseInt(rampEl.value);
+  repsOut.textContent=n; rampOut.textContent=m;
+  rReps.textContent=n; rRamp.textContent=m;
+  const base=162,rev=Math.round(n*base*(1-m*0.08));
+  const cost=Math.round(n*120);
+  const roi=(rev/cost).toFixed(1);
+  rRev.textContent='R$'+rev+'k'; rRoi.textContent=roi+'×';
+}
+repsEl.addEventListener('input',calc);
+rampEl.addEventListener('input',calc);
+</script>
+</body>
+</html>
